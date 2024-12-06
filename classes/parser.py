@@ -75,76 +75,76 @@ class MiniJavaParser:
         
 
     def parse_class(self, father):
-        classe_atual = f'CLASSE{self.id_class}'
-        self.tree.node(classe_atual, 'classe')
-        self.tree.edge(father, classe_atual)
+        current_class = f'CLASSE{self.id_class}'
+        self.tree.node(current_class, 'classe')
+        self.tree.edge(father, current_class)
 
-        self.expect("key","class", classe_atual)
-        self.expect("id", self.peek()[1], classe_atual)
+        self.expect("key","class", current_class)
+        self.expect("id", self.peek()[1], current_class)
 
         if self.peek()[1] == "extends":
-            self.expect("key", "extends", classe_atual)
-            self.expect("id", self.peek()[1], classe_atual)
+            self.expect("key", "extends", current_class)
+            self.expect("id", self.peek()[1], current_class)
 
-        self.expect("del","{", classe_atual)
+        self.expect("del","{", current_class)
  
         while self.peek() != ("del", "}"):
             token = self.peek()
             if token[0] == "type":  # Uma variável começa com um tipo
-                self.parse_var(classe_atual)
+                self.parse_var(current_class)
                 self.id_var += 1
             elif token[0] == "key" and self.peek()[1] == "public":  # Método começa com "public"
-                self.parse_method(classe_atual)
+                self.parse_method(current_class)
                 self.id_method += 1
             else:
                 raise ValueError(f"Token inesperado: {self.peek()}")
         
-        self.expect("del", "}", classe_atual)
+        self.expect("del", "}", current_class)
     
 
     def parse_var(self, father):
-        var_atual = f'VAR{self.id_var}'
-        self.tree.node(var_atual, "var")
-        self.tree.edge(father, var_atual)
-        self.parse_type(var_atual)
+        current_var = f'VAR{self.id_var}'
+        self.tree.node(current_var, "var")
+        self.tree.edge(father, current_var)
+        self.parse_type(current_var)
         self.id_type += 1
-        self.expect("id", self.peek()[1], var_atual)
-        self.expect("del", ";", var_atual)
+        self.expect("id", self.peek()[1], current_var)
+        self.expect("del", ";", current_var)
     
 
     def parse_type(self, father):
-        type_atual = f'TYPE{self.id_type}'
-        self.tree.node(type_atual, "tipo")
-        self.tree.edge(father, type_atual)
+        current_type = f'TYPE{self.id_type}'
+        self.tree.node(current_type, "tipo")
+        self.tree.edge(father, current_type)
         if self.peek()[1] == "int":
-            self.expect("type", "int", type_atual)
+            self.expect("type", "int", current_type)
             if self.peek()[1] == "[":
-                self.expect("del", "[", type_atual)
-                self.expect("del", "]", type_atual)
+                self.expect("del", "[", current_type)
+                self.expect("del", "]", current_type)
         else:
-            self.expect("type" or "id", self.peek()[1], type_atual)
+            self.expect("type" or "id", self.peek()[1], current_type)
                 
     def parse_method(self, father):
-        metodo_atual = f'METODO{self.id_method}'
-        self.tree.node(metodo_atual, "metodo")
-        self.tree.edge(father, metodo_atual)
-        self.expect("key", "public", metodo_atual)
-        self.parse_type(metodo_atual)
-        self.expect("id", self.peek()[1], metodo_atual)
-        self.expect("del", "(", metodo_atual)
+        current_method = f'METODO{self.id_method}'
+        self.tree.node(current_method, "metodo")
+        self.tree.edge(father, current_method)
+        self.expect("key", "public", current_method)
+        self.parse_type(current_method)
+        self.expect("id", self.peek()[1], current_method)
+        self.expect("del", "(", current_method)
         
         #params
 
-        self.expect("del", ")", metodo_atual)
-        self.expect("del", "{", metodo_atual)
+        self.expect("del", ")", current_method)
+        self.expect("del", "{", current_method)
 
         if self.peek()[0] == "type":
-            self.parse_var(metodo_atual)
+            self.parse_var(current_method)
             self.id_var += 1
 
         #CMD
 
-        self.expect("del", "}", metodo_atual)
+        self.expect("del", "}", current_method)
 
        
 

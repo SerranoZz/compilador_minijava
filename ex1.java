@@ -4,7 +4,7 @@ class Factorial {
     }
 }
 // Comentário de uma linha
-class Fac {
+class Fac extends pinto {
     int a; 
     int b;
     int c;

@@ -38,56 +38,60 @@ digraph {
 	CLASSE0 -> 17
 	18 [label=Fac]
 	CLASSE0 -> 18
-	19 [label="{"]
+	19 [label=extends]
 	CLASSE0 -> 19
+	20 [label=pinto]
+	CLASSE0 -> 20
+	21 [label="{"]
+	CLASSE0 -> 21
 	VAR0 [label=var]
 	CLASSE0 -> VAR0
 	TYPE0 [label=tipo]
 	VAR0 -> TYPE0
-	20 [label=int]
-	TYPE0 -> 20
-	21 [label=a]
-	VAR0 -> 21
-	22 [label=";"]
-	VAR0 -> 22
+	22 [label=int]
+	TYPE0 -> 22
+	23 [label=a]
+	VAR0 -> 23
+	24 [label=";"]
+	VAR0 -> 24
 	VAR1 [label=var]
 	CLASSE0 -> VAR1
 	TYPE1 [label=tipo]
 	VAR1 -> TYPE1
-	23 [label=int]
-	TYPE1 -> 23
-	24 [label=b]
-	VAR1 -> 24
-	25 [label=";"]
-	VAR1 -> 25
+	25 [label=int]
+	TYPE1 -> 25
+	26 [label=b]
+	VAR1 -> 26
+	27 [label=";"]
+	VAR1 -> 27
 	VAR2 [label=var]
 	CLASSE0 -> VAR2
 	TYPE2 [label=tipo]
 	VAR2 -> TYPE2
-	26 [label=int]
-	TYPE2 -> 26
-	27 [label=c]
-	VAR2 -> 27
-	28 [label=";"]
-	VAR2 -> 28
+	28 [label=int]
+	TYPE2 -> 28
+	29 [label=c]
+	VAR2 -> 29
+	30 [label=";"]
+	VAR2 -> 30
 	METODO0 [label=metodo]
 	CLASSE0 -> METODO0
-	29 [label=public]
-	METODO0 -> 29
+	31 [label=public]
+	METODO0 -> 31
 	TYPE3 [label=tipo]
 	METODO0 -> TYPE3
-	30 [label=int]
-	TYPE3 -> 30
-	31 [label=ComputeFac]
-	METODO0 -> 31
-	32 [label="("]
-	METODO0 -> 32
-	33 [label=")"]
+	32 [label=int]
+	TYPE3 -> 32
+	33 [label=ComputeFac]
 	METODO0 -> 33
-	34 [label="{"]
+	34 [label="("]
 	METODO0 -> 34
-	35 [label="}"]
+	35 [label=")"]
 	METODO0 -> 35
-	36 [label="}"]
-	CLASSE0 -> 36
+	36 [label="{"]
+	METODO0 -> 36
+	37 [label="}"]
+	METODO0 -> 37
+	38 [label="}"]
+	CLASSE0 -> 38
 }
