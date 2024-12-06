@@ -130,6 +130,7 @@ class MiniJavaParser:
         self.tree.edge(father, current_method)
         self.expect("key", "public", current_method)
         self.parse_type(current_method)
+        self.id_type += 1
         self.expect("id", self.peek()[1], current_method)
         self.expect("del", "(", current_method)
         

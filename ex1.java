@@ -5,13 +5,12 @@ class Factorial {
 }
 // Comentário de uma linha
 class Fac extends pinto {
-    int a; 
-    int b;
-    int c;
     public int ComputeFac() {
     }
-    /*
-     * Comentário de várias linhas
-     * Remover aqui
-     */
+}
+
+class Pintinho {
+    public int Guaguagay(){
+        
+    }
 }

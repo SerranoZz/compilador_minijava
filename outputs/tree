@@ -44,54 +44,52 @@ digraph {
 	CLASSE0 -> 20
 	21 [label="{"]
 	CLASSE0 -> 21
-	VAR0 [label=var]
-	CLASSE0 -> VAR0
-	TYPE0 [label=tipo]
-	VAR0 -> TYPE0
-	22 [label=int]
-	TYPE0 -> 22
-	23 [label=a]
-	VAR0 -> 23
-	24 [label=";"]
-	VAR0 -> 24
-	VAR1 [label=var]
-	CLASSE0 -> VAR1
-	TYPE1 [label=tipo]
-	VAR1 -> TYPE1
-	25 [label=int]
-	TYPE1 -> 25
-	26 [label=b]
-	VAR1 -> 26
-	27 [label=";"]
-	VAR1 -> 27
-	VAR2 [label=var]
-	CLASSE0 -> VAR2
-	TYPE2 [label=tipo]
-	VAR2 -> TYPE2
-	28 [label=int]
-	TYPE2 -> 28
-	29 [label=c]
-	VAR2 -> 29
-	30 [label=";"]
-	VAR2 -> 30
 	METODO0 [label=metodo]
 	CLASSE0 -> METODO0
-	31 [label=public]
-	METODO0 -> 31
-	TYPE3 [label=tipo]
-	METODO0 -> TYPE3
-	32 [label=int]
-	TYPE3 -> 32
-	33 [label=ComputeFac]
-	METODO0 -> 33
-	34 [label="("]
-	METODO0 -> 34
-	35 [label=")"]
-	METODO0 -> 35
-	36 [label="{"]
-	METODO0 -> 36
-	37 [label="}"]
-	METODO0 -> 37
-	38 [label="}"]
-	CLASSE0 -> 38
+	22 [label=public]
+	METODO0 -> 22
+	TYPE0 [label=tipo]
+	METODO0 -> TYPE0
+	23 [label=int]
+	TYPE0 -> 23
+	24 [label=ComputeFac]
+	METODO0 -> 24
+	25 [label="("]
+	METODO0 -> 25
+	26 [label=")"]
+	METODO0 -> 26
+	27 [label="{"]
+	METODO0 -> 27
+	28 [label="}"]
+	METODO0 -> 28
+	29 [label="}"]
+	CLASSE0 -> 29
+	CLASSE1 [label=classe]
+	PROG -> CLASSE1
+	30 [label=class]
+	CLASSE1 -> 30
+	31 [label=Pintinho]
+	CLASSE1 -> 31
+	32 [label="{"]
+	CLASSE1 -> 32
+	METODO1 [label=metodo]
+	CLASSE1 -> METODO1
+	33 [label=public]
+	METODO1 -> 33
+	TYPE1 [label=tipo]
+	METODO1 -> TYPE1
+	34 [label=int]
+	TYPE1 -> 34
+	35 [label=Guaguagay]
+	METODO1 -> 35
+	36 [label="("]
+	METODO1 -> 36
+	37 [label=")"]
+	METODO1 -> 37
+	38 [label="{"]
+	METODO1 -> 38
+	39 [label="}"]
+	METODO1 -> 39
+	40 [label="}"]
+	CLASSE1 -> 40
 }
