@@ -92,13 +92,24 @@ class MiniJavaParser:
         self.expect("del", "}", "CLASSE")
 
     
-    def parse_type(self):
+    def parse_var(self):
         self.tree.node("VAR", "var")
-        self.expect("type" or "id", self.peek()[1], "VAR")
+        self.parse_type(self)
         self.expect("id", self.peek()[1], "VAR")
         self.expect("del", ";", "VAR")
     
 
+    def parse_type(self):
+        self.tree.node("TYPE", "tipo")
+        self.tree.node("VAR", "TYPE")
+        if self.peek()[1] == "int":
+            self.expect("type", "int", "TYPE")
+            if self.peek()[1] == "[":
+                self.expect("del", "[", "TYPE")
+                self.expect("del", "]", "TYPE")
+        else:
+            self.expect("type" or "id", self.peek()[1], "TYPE")
+                
     def parse_method(self):
         self.tree.node("METODO", "metodo")
         self.expect("key", "public", "METODO")
