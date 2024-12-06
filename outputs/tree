@@ -50,24 +50,44 @@ digraph {
 	VAR0 -> 21
 	22 [label=";"]
 	VAR0 -> 22
+	VAR1 [label=var]
+	CLASSE0 -> VAR1
+	TYPE1 [label=tipo]
+	VAR1 -> TYPE1
+	23 [label=int]
+	TYPE1 -> 23
+	24 [label=b]
+	VAR1 -> 24
+	25 [label=";"]
+	VAR1 -> 25
+	VAR2 [label=var]
+	CLASSE0 -> VAR2
+	TYPE2 [label=tipo]
+	VAR2 -> TYPE2
+	26 [label=int]
+	TYPE2 -> 26
+	27 [label=c]
+	VAR2 -> 27
+	28 [label=";"]
+	VAR2 -> 28
 	METODO0 [label=metodo]
 	CLASSE0 -> METODO0
-	23 [label=public]
-	METODO0 -> 23
-	TYPE1 [label=tipo]
-	METODO0 -> TYPE1
-	24 [label=int]
-	TYPE1 -> 24
-	25 [label=ComputeFac]
-	METODO0 -> 25
-	26 [label="("]
-	METODO0 -> 26
-	27 [label=")"]
-	METODO0 -> 27
-	28 [label="{"]
-	METODO0 -> 28
-	29 [label="}"]
+	29 [label=public]
 	METODO0 -> 29
-	30 [label="}"]
-	CLASSE0 -> 30
+	TYPE3 [label=tipo]
+	METODO0 -> TYPE3
+	30 [label=int]
+	TYPE3 -> 30
+	31 [label=ComputeFac]
+	METODO0 -> 31
+	32 [label="("]
+	METODO0 -> 32
+	33 [label=")"]
+	METODO0 -> 33
+	34 [label="{"]
+	METODO0 -> 34
+	35 [label="}"]
+	METODO0 -> 35
+	36 [label="}"]
+	CLASSE0 -> 36
 }

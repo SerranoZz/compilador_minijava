@@ -137,10 +137,13 @@ class MiniJavaParser:
 
         self.expect("del", ")", metodo_atual)
         self.expect("del", "{", metodo_atual)
-        self.parse_var(metodo_atual)
-        
+
+        if self.peek()[0] == "type":
+            self.parse_var(metodo_atual)
+            self.id_var += 1
+
         #CMD
-        
+
         self.expect("del", "}", metodo_atual)
 
        

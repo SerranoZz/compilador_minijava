@@ -18,4 +18,4 @@ else:
 
     parser = MiniJavaParser(tokens)
     parser.parse_prog()
-    parser.tree.render('tree', format='png')
+    parser.tree.render('./outputs/tree', format='png')
