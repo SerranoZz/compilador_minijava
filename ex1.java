@@ -5,8 +5,8 @@ class Factorial {
 }
 // Comentário de uma linha
 class Fac {
-    int a;
-    public int ComputeFac(int num) {
+    int a; 
+    public int ComputeFac() {
     }
     /*
      * Comentário de várias linhas

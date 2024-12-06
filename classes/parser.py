@@ -4,6 +4,10 @@ class MiniJavaParser:
     def __init__(self, tokens):
         self.tokens = tokens
         self.current = 0
+        self.id_class = 0
+        self.id_method = 0
+        self.id_var = 0
+        self.id_type = 0
         self.tree = Digraph()
 
     def peek(self):
@@ -42,13 +46,11 @@ class MiniJavaParser:
         self.parse_main()
         self.current += 1
         while self.match("key", "class"):
-            self.current -= 0  # Voltar para não consumir o "CLASS"
-            self.tree.node('CLASSE', 'classe')
-            self.tree.edge('PROG', 'CLASSE')
-            self.parse_class()
+            self.current -= 1  # Voltar para não consumir o "CLASS"
+            self.parse_class("PROG")
+            self.id_class += 1
 
-        
-
+    
     #Funções das especificações da EBNF
     def parse_main(self):
         self.expect("key","class", "MAIN")
@@ -65,62 +67,81 @@ class MiniJavaParser:
         self.expect("id", self.peek()[1], "MAIN")
         self.expect("del",")", "MAIN")
         self.expect("del","{", "MAIN")
-        #cmd = self.parse_cmd()
+        
+        #CMD
+
         self.expect("del","}", "MAIN")
         return
         
 
-    def parse_class(self):
-        self.expect("key","class", "CLASSE")
-        self.expect("id", None, "CLASSE")
+    def parse_class(self, father):
+        classe_atual = f'CLASSE{self.id_class}'
+        self.tree.node(classe_atual, 'classe')
+        self.tree.edge(father, classe_atual)
+
+        self.expect("key","class", classe_atual)
+        self.expect("id", self.peek()[1], classe_atual)
 
         if self.peek()[1] == "extends":
-            self.expect("key", "extends", "CLASSE")
-            self.expect("id", None, "CLASSE")
+            self.expect("key", "extends", classe_atual)
+            self.expect("id", self.peek()[1], classe_atual)
 
-        self.expect("del","{", "CLASSE")
+        self.expect("del","{", classe_atual)
  
         while self.peek() != ("del", "}"):
             token = self.peek()
             if token[0] == "type":  # Uma variável começa com um tipo
-                self.parse_var()
-            elif token[0] == "key" and self.current_token()[1] == "public":  # Método começa com "public"
-                self.parse_method()
+                self.parse_var(classe_atual)
+                self.id_var += 1
+            elif token[0] == "key" and self.peek()[1] == "public":  # Método começa com "public"
+                self.parse_method(classe_atual)
+                self.id_method += 1
             else:
                 raise ValueError(f"Token inesperado: {self.peek()}")
         
-        self.expect("del", "}", "CLASSE")
-
-    
-    def parse_var(self):
-        self.tree.node("VAR", "var")
-        self.parse_type(self)
-        self.expect("id", self.peek()[1], "VAR")
-        self.expect("del", ";", "VAR")
+        self.expect("del", "}", classe_atual)
     
 
-    def parse_type(self):
-        self.tree.node("TYPE", "tipo")
-        self.tree.node("VAR", "TYPE")
+    def parse_var(self, father):
+        var_atual = f'VAR{self.id_var}'
+        self.tree.node(var_atual, "var")
+        self.tree.edge(father, var_atual)
+        self.parse_type(var_atual)
+        self.id_type += 1
+        self.expect("id", self.peek()[1], var_atual)
+        self.expect("del", ";", var_atual)
+    
+
+    def parse_type(self, father):
+        type_atual = f'TYPE{self.id_type}'
+        self.tree.node(type_atual, "tipo")
+        self.tree.edge(father, type_atual)
         if self.peek()[1] == "int":
-            self.expect("type", "int", "TYPE")
+            self.expect("type", "int", type_atual)
             if self.peek()[1] == "[":
-                self.expect("del", "[", "TYPE")
-                self.expect("del", "]", "TYPE")
+                self.expect("del", "[", type_atual)
+                self.expect("del", "]", type_atual)
         else:
-            self.expect("type" or "id", self.peek()[1], "TYPE")
+            self.expect("type" or "id", self.peek()[1], type_atual)
                 
-    def parse_method(self):
-        self.tree.node("METODO", "metodo")
-        self.expect("key", "public", "METODO")
-        self.expect("type" or "id", self.peek()[1], "METODO")
-        self.expect("id", self.peek()[1], "METODO")
-        self.expect("del", "(", "METODO")
+    def parse_method(self, father):
+        metodo_atual = f'METODO{self.id_method}'
+        self.tree.node(metodo_atual, "metodo")
+        self.tree.edge(father, metodo_atual)
+        self.expect("key", "public", metodo_atual)
+        self.parse_type(metodo_atual)
+        self.expect("id", self.peek()[1], metodo_atual)
+        self.expect("del", "(", metodo_atual)
         
-        if self.peek()[1] == "extends":
-            self.expect("key", "extends", "CLASSE")
-            self.expect("id", None, "CLASSE")
+        #params
 
+        self.expect("del", ")", metodo_atual)
+        self.expect("del", "{", metodo_atual)
+        self.parse_var(metodo_atual)
+        
+        #CMD
+        
+        self.expect("del", "}", metodo_atual)
 
        
 

@@ -1,0 +1,73 @@
+digraph {
+	PROG [label=prog]
+	MAIN [label=main]
+	PROG -> MAIN
+	1 [label=class]
+	MAIN -> 1
+	2 [label=Factorial]
+	MAIN -> 2
+	3 [label="{"]
+	MAIN -> 3
+	4 [label=public]
+	MAIN -> 4
+	5 [label=static]
+	MAIN -> 5
+	6 [label=void]
+	MAIN -> 6
+	7 [label=main]
+	MAIN -> 7
+	8 [label="("]
+	MAIN -> 8
+	9 [label=String]
+	MAIN -> 9
+	10 [label="["]
+	MAIN -> 10
+	11 [label="]"]
+	MAIN -> 11
+	12 [label=a]
+	MAIN -> 12
+	13 [label=")"]
+	MAIN -> 13
+	14 [label="{"]
+	MAIN -> 14
+	15 [label="}"]
+	MAIN -> 15
+	CLASSE0 [label=classe]
+	PROG -> CLASSE0
+	17 [label=class]
+	CLASSE0 -> 17
+	18 [label=Fac]
+	CLASSE0 -> 18
+	19 [label="{"]
+	CLASSE0 -> 19
+	VAR0 [label=var]
+	CLASSE0 -> VAR0
+	TYPE0 [label=tipo]
+	VAR0 -> TYPE0
+	20 [label=int]
+	TYPE0 -> 20
+	21 [label=a]
+	VAR0 -> 21
+	22 [label=";"]
+	VAR0 -> 22
+	METODO0 [label=metodo]
+	CLASSE0 -> METODO0
+	23 [label=public]
+	METODO0 -> 23
+	TYPE1 [label=tipo]
+	METODO0 -> TYPE1
+	24 [label=int]
+	TYPE1 -> 24
+	25 [label=ComputeFac]
+	METODO0 -> 25
+	26 [label="("]
+	METODO0 -> 26
+	27 [label=")"]
+	METODO0 -> 27
+	28 [label="{"]
+	METODO0 -> 28
+	29 [label="}"]
+	METODO0 -> 29
+	30 [label="}"]
+	CLASSE0 -> 30
+}
