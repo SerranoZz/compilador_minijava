@@ -9,7 +9,7 @@ class MiniJavaScanner:
     def __init__(self):
         # Tipos de tokens reconhecidos por MiniJava+
         self.TYPES = [
-            ("key", r"\b(System.out.println|class|public|static|void|main|if|else|while|return|true|false|String|null)\b"),
+            ("key", r"\b(System.out.println|class|extends|public|static|void|main|if|else|while|return|true|false|String|null)\b"),
             ("type", r"\b(boolean|int)\b"),
             ("id", r"[a-zA-Z_][a-zA-Z0-9_]*"),
             ("num", r"\b\d+\b"),
