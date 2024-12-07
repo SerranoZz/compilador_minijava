@@ -30,66 +30,86 @@ digraph {
 	MAIN -> 13
 	14 [label="{"]
 	MAIN -> 14
-	15 [label="}"]
-	MAIN -> 15
+	CMD0 [label=cmd]
+	MAIN -> CMD0
+	15 [label="System.out.println"]
+	CMD0 -> 15
+	16 [label="("]
+	CMD0 -> 16
+	17 [label=")"]
+	CMD0 -> 17
+	18 [label=";"]
+	CMD0 -> 18
+	19 [label="}"]
+	MAIN -> 19
 	CLASSE0 [label=classe]
 	PROG -> CLASSE0
-	17 [label=class]
-	CLASSE0 -> 17
-	18 [label=Fac]
-	CLASSE0 -> 18
-	19 [label=extends]
-	CLASSE0 -> 19
-	20 [label=pinto]
-	CLASSE0 -> 20
-	21 [label="{"]
+	21 [label=class]
 	CLASSE0 -> 21
+	22 [label=Teste1]
+	CLASSE0 -> 22
+	23 [label=extends]
+	CLASSE0 -> 23
+	24 [label=alou]
+	CLASSE0 -> 24
+	25 [label="{"]
+	CLASSE0 -> 25
+	VAR0 [label=var]
+	CLASSE0 -> VAR0
+	TYPE0 [label=tipo]
+	VAR0 -> TYPE0
+	26 [label=int]
+	TYPE0 -> 26
+	27 [label=a]
+	VAR0 -> 27
+	28 [label=";"]
+	VAR0 -> 28
 	METODO0 [label=metodo]
 	CLASSE0 -> METODO0
-	22 [label=public]
-	METODO0 -> 22
-	TYPE0 [label=tipo]
-	METODO0 -> TYPE0
-	23 [label=int]
-	TYPE0 -> 23
-	24 [label=ComputeFac]
-	METODO0 -> 24
-	25 [label="("]
-	METODO0 -> 25
-	26 [label=")"]
-	METODO0 -> 26
-	27 [label="{"]
-	METODO0 -> 27
-	28 [label="}"]
-	METODO0 -> 28
-	29 [label="}"]
-	CLASSE0 -> 29
-	CLASSE1 [label=classe]
-	PROG -> CLASSE1
-	30 [label=class]
-	CLASSE1 -> 30
-	31 [label=Pintinho]
-	CLASSE1 -> 31
-	32 [label="{"]
-	CLASSE1 -> 32
-	METODO1 [label=metodo]
-	CLASSE1 -> METODO1
-	33 [label=public]
-	METODO1 -> 33
+	29 [label=public]
+	METODO0 -> 29
 	TYPE1 [label=tipo]
-	METODO1 -> TYPE1
-	34 [label=int]
-	TYPE1 -> 34
-	35 [label=Guaguagay]
-	METODO1 -> 35
+	METODO0 -> TYPE1
+	30 [label=int]
+	TYPE1 -> 30
+	31 [label=Teste1]
+	METODO0 -> 31
+	32 [label="("]
+	METODO0 -> 32
+	33 [label=")"]
+	METODO0 -> 33
+	34 [label="{"]
+	METODO0 -> 34
+	CMD1 [label=cmd]
+	METODO0 -> CMD1
+	35 [label=while]
+	CMD1 -> 35
 	36 [label="("]
-	METODO1 -> 36
+	CMD1 -> 36
 	37 [label=")"]
-	METODO1 -> 37
+	CMD1 -> 37
+	CMD2 [label=cmd]
+	CMD1 -> CMD2
 	38 [label="{"]
-	METODO1 -> 38
-	39 [label="}"]
-	METODO1 -> 39
-	40 [label="}"]
-	CLASSE1 -> 40
+	CMD2 -> 38
+	39 [label=a]
+	CMD2 -> 39
+	40 [label="="]
+	CMD2 -> 40
+	41 [label=";"]
+	CMD2 -> 41
+	CMD3 [label=cmd]
+	CMD2 -> CMD3
+	42 [label=b]
+	CMD3 -> 42
+	43 [label="="]
+	CMD3 -> 43
+	44 [label=";"]
+	CMD3 -> 44
+	45 [label="}"]
+	CMD2 -> 45
+	46 [label="}"]
+	METODO0 -> 46
+	47 [label="}"]
+	CLASSE0 -> 47
 }

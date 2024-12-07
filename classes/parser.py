@@ -8,6 +8,8 @@ class MiniJavaParser:
         self.id_method = 0
         self.id_var = 0
         self.id_type = 0
+        self.id_params = 0
+        self.id_cmd = 0
         self.tree = Digraph()
 
     def peek(self):
@@ -68,7 +70,8 @@ class MiniJavaParser:
         self.expect("del",")", "MAIN")
         self.expect("del","{", "MAIN")
         
-        #CMD
+        self.parse_cmd("MAIN")
+        self.id_cmd += 1
 
         self.expect("del","}", "MAIN")
         return
@@ -134,7 +137,9 @@ class MiniJavaParser:
         self.expect("id", self.peek()[1], current_method)
         self.expect("del", "(", current_method)
         
-        #params
+        if self.peek()[0] == "type":
+            self.parse_params(current_method)
+            self.id_params += 1
 
         self.expect("del", ")", current_method)
         self.expect("del", "{", current_method)
@@ -143,9 +148,92 @@ class MiniJavaParser:
             self.parse_var(current_method)
             self.id_var += 1
 
-        #CMD
-
+        while self.peek()[1] != "}":
+            print(f'Entrei no parser_cmd pela 1 vez: {self.peek()}')
+            self.parse_cmd(current_method)
+            self.id_cmd += 1
+        
         self.expect("del", "}", current_method)
+
+
+
+    def parse_params(self, father):
+        current_params = f'PARAMS{self.id_params}'
+        self.tree.node(current_params, "params")
+        self.tree.edge(father, current_params)
+        self.parse_type(current_params)
+        self.id_type += 1
+        self.expect("id", self.peek()[1], current_params)
+        
+        while self.peek()[1] != ")":
+            self.expect("del", ",", current_params)
+            self.parse_type(current_params)
+            self.id_type += 1
+            self.expect("id", self.peek()[1], current_params)
+        
+
+    def parse_cmd(self, father):
+        current_cmd = f'CMD{self.id_cmd}'
+        if father != current_cmd:
+            self.tree.node(current_cmd, "cmd")
+            self.tree.edge(father, current_cmd)
+
+        token = self.peek()
+
+        if token[0] == "del" and token[1] == "{":  # Bloco: '{ CMD }'
+            self.expect("del", "{", current_cmd)
+            while self.peek()[1] != "}":
+                self.parse_cmd(current_cmd)
+                self.id_cmd += 1
+            self.expect("del", "}", current_cmd)
+
+        elif token[0] == "key" and token[1] == "if":  # Condicional: 'if (EXP) CMD else CMD'
+            self.expect("key", "if", current_cmd)
+            self.expect("del", "(", current_cmd)
+            #self.parse_exp(current_cmd)
+            self.expect("del", ")", current_cmd)
+            self.id_cmd += 1
+            self.parse_cmd(current_cmd)
+            if self.peek() == ("key", "else"):
+                self.expect("key", "else", current_cmd)
+                self.parse_cmd(current_cmd)
+                self.id_cmd += 1
+
+        elif token[0] == "key" and token[1] == "while":  # Laço: 'while (EXP) CMD'
+            self.expect("key", "while", current_cmd)
+            self.expect("del", "(", current_cmd)
+            #self.parse_exp(current_cmd)
+            self.expect("del", ")", current_cmd)
+            self.id_cmd += 1
+            self.parse_cmd(current_cmd)
+
+        elif token[0] == "key" and token[1] == "System.out.println":  # Print: 'System.out.println (EXP);'
+            self.expect("key", "System.out.println", current_cmd)
+            self.expect("del", "(", current_cmd)
+            #self.parse_exp(current_cmd)
+            self.expect("del", ")", current_cmd)
+            self.expect("del", ";", current_cmd)
+
+        elif token[0] == "id":  # Atribuição ou chamada de método
+            self.expect("id", token[1], current_cmd)
+            if self.peek()[0] == "op"  and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
+                self.expect("op", "=", current_cmd)
+                #self.parse_exp(current_cmd)
+                self.expect("del", ";", current_cmd)
+            elif  self.peek()[0] == "del"  and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
+                self.expect("del", "[", current_cmd)
+                #self.parse_exp(current_cmd)
+                self.expect("del", "]", current_cmd)
+                self.expect("op", "=", current_cmd)
+                #self.parse_exp(current_cmd)
+                self.expect("del", ";", current_cmd)
+            
+
+        else:
+            raise SyntaxError(f"Comando inválido ou inesperado: {token}")
+
+
+
 
        
 

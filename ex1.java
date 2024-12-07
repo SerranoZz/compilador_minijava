@@ -1,16 +1,17 @@
 class Factorial {
     public static void main(String[] a) {
-        
+        System.out.println();
     }
 }
 // Comentário de uma linha
-class Fac extends pinto {
-    public int ComputeFac() {
-    }
-}
+class Teste1 extends alou {
+    int a;
+    public int Teste1() {
+        while(){
+            a = ;
+            b = ;
+        }
 
-class Pintinho {
-    public int Guaguagay(){
-        
     }
+
 }
