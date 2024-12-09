@@ -1,21 +1,13 @@
-class Factorial {
-    public static void main(String[] bolsonaro) {
-        if(){
-            a = ;
-        }
+class Factorial{
+    public static void main(String[] a){
+        a = ;
     }
-}
-// Comentário de uma linha
-class Teste1 extends alou {
+   }
+class Fac {
     int a;
-    public int Teste1() {
-        while(){
-            a = ;
-            b = ;
-            c = ;
-            d = ;
-        }
-
+    int b;
+    public int ComputeFac(int num){
+    if (){
     }
-
-}
+    }
+}   

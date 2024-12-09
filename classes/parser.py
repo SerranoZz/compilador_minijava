@@ -74,8 +74,7 @@ class MiniJavaParser:
             self.parse_cmd("MAIN")
             self.id_cmd += 1
 
-        self.expect("del","}", "MAIN")
-        return
+        self.expect("del","}", "MAIN")        
         
 
     def parse_class(self, father):
@@ -145,7 +144,7 @@ class MiniJavaParser:
         self.expect("del", ")", current_method)
         self.expect("del", "{", current_method)
 
-        if self.peek()[0] == "type":
+        while self.peek()[0] == "type":
             self.parse_var(current_method)
             self.id_var += 1
 
@@ -232,14 +231,3 @@ class MiniJavaParser:
 
         else:
             raise SyntaxError(f"Comando inválido ou inesperado: {token}")
-
-
-
-
-       
-
-
-
-        
-
-

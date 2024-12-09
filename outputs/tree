@@ -24,7 +24,7 @@ digraph {
 	MAIN -> 10
 	11 [label="]"]
 	MAIN -> 11
-	12 [label=bolsonaro]
+	12 [label=a]
 	MAIN -> 12
 	13 [label=")"]
 	MAIN -> 13
@@ -32,110 +32,82 @@ digraph {
 	MAIN -> 14
 	CMD0 [label=cmd]
 	MAIN -> CMD0
-	15 [label=if]
+	15 [label=a]
 	CMD0 -> 15
-	16 [label="("]
+	16 [label="="]
 	CMD0 -> 16
-	17 [label=")"]
+	17 [label=";"]
 	CMD0 -> 17
-	CMD1 [label=cmd]
-	CMD0 -> CMD1
-	18 [label="{"]
-	CMD1 -> 18
-	19 [label=a]
-	CMD1 -> 19
-	20 [label="="]
-	CMD1 -> 20
-	21 [label=";"]
-	CMD1 -> 21
-	22 [label="}"]
-	CMD1 -> 22
-	23 [label="}"]
-	MAIN -> 23
+	18 [label="}"]
+	MAIN -> 18
 	CLASSE0 [label=classe]
 	PROG -> CLASSE0
-	25 [label=class]
-	CLASSE0 -> 25
-	26 [label=Teste1]
-	CLASSE0 -> 26
-	27 [label=extends]
-	CLASSE0 -> 27
-	28 [label=alou]
-	CLASSE0 -> 28
-	29 [label="{"]
-	CLASSE0 -> 29
+	20 [label=class]
+	CLASSE0 -> 20
+	21 [label=Fac]
+	CLASSE0 -> 21
+	22 [label="{"]
+	CLASSE0 -> 22
 	VAR0 [label=var]
 	CLASSE0 -> VAR0
 	TYPE0 [label=tipo]
 	VAR0 -> TYPE0
-	30 [label=int]
-	TYPE0 -> 30
-	31 [label=a]
-	VAR0 -> 31
-	32 [label=";"]
-	VAR0 -> 32
+	23 [label=int]
+	TYPE0 -> 23
+	24 [label=a]
+	VAR0 -> 24
+	25 [label=";"]
+	VAR0 -> 25
+	VAR1 [label=var]
+	CLASSE0 -> VAR1
+	TYPE1 [label=tipo]
+	VAR1 -> TYPE1
+	26 [label=int]
+	TYPE1 -> 26
+	27 [label=b]
+	VAR1 -> 27
+	28 [label=";"]
+	VAR1 -> 28
 	METODO0 [label=metodo]
 	CLASSE0 -> METODO0
-	33 [label=public]
-	METODO0 -> 33
-	TYPE1 [label=tipo]
-	METODO0 -> TYPE1
-	34 [label=int]
-	TYPE1 -> 34
-	35 [label=Teste1]
+	29 [label=public]
+	METODO0 -> 29
+	TYPE2 [label=tipo]
+	METODO0 -> TYPE2
+	30 [label=int]
+	TYPE2 -> 30
+	31 [label=ComputeFac]
+	METODO0 -> 31
+	32 [label="("]
+	METODO0 -> 32
+	PARAMS0 [label=params]
+	METODO0 -> PARAMS0
+	TYPE3 [label=tipo]
+	PARAMS0 -> TYPE3
+	33 [label=int]
+	TYPE3 -> 33
+	34 [label=num]
+	PARAMS0 -> 34
+	35 [label=")"]
 	METODO0 -> 35
-	36 [label="("]
+	36 [label="{"]
 	METODO0 -> 36
-	37 [label=")"]
-	METODO0 -> 37
-	38 [label="{"]
-	METODO0 -> 38
-	CMD3 [label=cmd]
-	METODO0 -> CMD3
-	39 [label=while]
-	CMD3 -> 39
-	40 [label="("]
-	CMD3 -> 40
-	41 [label=")"]
-	CMD3 -> 41
-	CMD4 [label=cmd]
-	CMD3 -> CMD4
-	42 [label="{"]
-	CMD4 -> 42
-	43 [label=a]
-	CMD4 -> 43
-	44 [label="="]
-	CMD4 -> 44
-	45 [label=";"]
-	CMD4 -> 45
-	CMD5 [label=cmd]
-	CMD4 -> CMD5
-	46 [label=b]
-	CMD5 -> 46
-	47 [label="="]
-	CMD5 -> 47
-	48 [label=";"]
-	CMD5 -> 48
-	CMD6 [label=cmd]
-	CMD4 -> CMD6
-	49 [label=c]
-	CMD6 -> 49
-	50 [label="="]
-	CMD6 -> 50
-	51 [label=";"]
-	CMD6 -> 51
-	CMD7 [label=cmd]
-	CMD4 -> CMD7
-	52 [label=d]
-	CMD7 -> 52
-	53 [label="="]
-	CMD7 -> 53
-	54 [label=";"]
-	CMD7 -> 54
-	55 [label="}"]
-	CMD4 -> 55
-	56 [label="}"]
-	METODO0 -> 56
-	57 [label="}"]
-	CLASSE0 -> 57
+	CMD1 [label=cmd]
+	METODO0 -> CMD1
+	37 [label=if]
+	CMD1 -> 37
+	38 [label="("]
+	CMD1 -> 38
+	39 [label=")"]
+	CMD1 -> 39
+	CMD2 [label=cmd]
+	CMD1 -> CMD2
+	40 [label="{"]
+	CMD2 -> 40
+	41 [label="}"]
+	CMD2 -> 41
+	42 [label="}"]
+	METODO0 -> 42
+	43 [label="}"]
+	CLASSE0 -> 43
 }
