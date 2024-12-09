@@ -70,8 +70,9 @@ class MiniJavaParser:
         self.expect("del",")", "MAIN")
         self.expect("del","{", "MAIN")
         
-        self.parse_cmd("MAIN")
-        self.id_cmd += 1
+        while self.peek()[1] != "}":
+            self.parse_cmd("MAIN")
+            self.id_cmd += 1
 
         self.expect("del","}", "MAIN")
         return

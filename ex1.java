@@ -1,6 +1,8 @@
 class Factorial {
-    public static void main(String[] a) {
-        System.out.println();
+    public static void main(String[] bolsonaro) {
+        if(){
+            a = ;
+        }
     }
 }
 // Comentário de uma linha
@@ -10,6 +12,8 @@ class Teste1 extends alou {
         while(){
             a = ;
             b = ;
+            c = ;
+            d = ;
         }
 
     }
