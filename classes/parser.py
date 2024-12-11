@@ -10,6 +10,19 @@ class MiniJavaParser:
         self.id_type = 0
         self.id_params = 0
         self.id_cmd = 0
+        self.id_exp = 0
+        self.id_exp_aux = 0
+        self.id_rexp = 0
+        self.id_rexp_aux = 0
+        self.id_aexp = 0
+        self.id_aexp_aux = 0
+        self.id_mexp = 0
+        self.id_mexp_aux = 0
+        self.id_sexp = 0
+        self.id_sexp_aux = 0
+        self.id_pexp = 0
+        self.id_pexp_aux = 0
+        self.id_exps = 0
         self.tree = Digraph()
 
     def peek(self):
@@ -53,7 +66,8 @@ class MiniJavaParser:
             self.id_class += 1
 
     
-    #Funções das especificações da EBNF
+    ### Funções das especificações da EBNF
+    # MAIN
     def parse_main(self):
         self.expect("key","class", "MAIN")
         self.expect("id", self.peek()[1], "MAIN")
@@ -70,11 +84,11 @@ class MiniJavaParser:
         self.expect("del",")", "MAIN")
         self.expect("del","{", "MAIN")
         
-        while self.peek()[1] != "}":
-            self.parse_cmd("MAIN")
-            self.id_cmd += 1
+        self.parse_cmd("MAIN")
+        self.id_cmd += 1
 
-        self.expect("del","}", "MAIN")        
+        self.expect("del","}", "MAIN")
+        return
         
 
     def parse_class(self, father):
@@ -144,7 +158,7 @@ class MiniJavaParser:
         self.expect("del", ")", current_method)
         self.expect("del", "{", current_method)
 
-        while self.peek()[0] == "type":
+        if self.peek()[0] == "type":
             self.parse_var(current_method)
             self.id_var += 1
 
@@ -171,6 +185,213 @@ class MiniJavaParser:
             self.id_type += 1
             self.expect("id", self.peek()[1], current_params)
         
+    # Regra original: EXP -> EXP && REXP | REXP
+    # Regra atual: EXP -> REXP EXP_AUX
+    # Regra adicional: EXP_AUX -> && EXP_AUX | ε    
+    def parse_exp(self, father):
+        current_exp = f'EXP{self.id_exp}'
+        self.tree.node(current_exp, 'exp')
+        self.tree.edge(father, current_exp)
+        self.parse_rexp(current_exp)
+        self.id_rexp += 1
+        self.parse_exp_aux(current_exp)
+        self.id_exp_aux += 1
+
+    def parse_exp_aux(self, father):
+        current_exp_aux = f'EXP_AUX{self.id_exp_aux}'
+        self.tree.node(current_exp_aux, 'exp_aux')
+        self.tree.edge(father, current_exp_aux)
+
+        if self.peek()[1] == '&&':
+            self.expect("del", "&&", current_exp_aux) # Verificar se o token está pegando && ou apenas &
+            self.parse_rexp(current_exp_aux)
+            self.id_rexp += 1
+            self.parse_exp_aux(current_exp_aux)
+            self.id_exp_aux += 1
+
+    # Regra original: REXP -> REXP < AEXP | REXP > AEXP | REXP == AEXP | REXP != AEXP | AEXP
+    # Regra atual: REXP -> AEXP REXP_AUX
+    # Regra adicional: REXP_AUX -> < REXP_AUX | > REXP_AUX | == REXP_AUX | != REXP_AUX | ε  
+    def parse_rexp(self, father):
+        current_rexp = f'REXP{self.id_rexp}'
+        self.tree.node(current_rexp, 'rexp')
+        self.tree.edge(father, current_rexp)
+        self.parse_aexp(current_rexp)
+        self.id_aexp += 1
+        self.parse_rexp_aux(current_rexp)
+        self.id_rexp_aux += 1
+
+    def parse_rexp_aux(self, father):
+        current_rexp_aux = f'REXP_AUX{self.id_rexp_aux}'
+        self.tree.node(current_rexp_aux, 'rexp_aux')
+        self.tree.edge(father, current_rexp_aux)
+
+        if self.peek()[1] in ['<', '>', '==', '!=']: # Verificar se o token está pegando == e != ou apenas = e !
+            self.expect("op", self.peek()[1], current_rexp_aux)
+            self.parse_aexp(current_rexp_aux)
+            self.id_aexp += 1
+            self.parse_rexp_aux(current_rexp_aux)
+            self.id_rexp_aux += 1
+
+    # Regra original: AEXP -> AEXP + MEXP | AEXP - MEXP | MEXP
+    # Regra atual: AEXP -> MEXP AEXP_AUX
+    # Regra adicional: AEXP_AUX -> + MEXP AEXP_AUX | - MEXP AEXP_AUX | ε
+    def parse_aexp(self, father):
+        current_aexp = f'AEXP{self.id_aexp}'
+        self.tree.node(current_aexp, 'aexp')
+        self.tree.edge(father, current_aexp)
+        self.parse_mexp(current_aexp)
+        self.id_mexp += 1
+        self.parse_aexp_aux(current_aexp)
+        self.id_aexp_aux += 1
+
+    def parse_aexp_aux(self, father):
+        current_aexp_aux = f'AEXP_AUX{self.id_aexp_aux}'
+        self.tree.node(current_aexp_aux, 'aexp_aux')
+        self.tree.edge(father, current_aexp_aux)
+
+        if self.peek()[1] in ['+', '-']:
+            self.expect("op", self.peek()[1], current_aexp_aux)
+            self.parse_mexp(current_aexp_aux)
+            self.id_mexp += 1
+            self.parse_aexp_aux(current_aexp_aux)
+            self.id_aexp_aux += 1
+
+    # Regra original: MEXP -> MEXP * SEXP | SEXP
+    # Regra atual: MEXP -> SEXP MEXP_AUX
+    # Regra adicional: MEXP_AUX -> * SEXP MEXP_AUX | ε
+    def parse_mexp(self, father):
+        current_mexp = f'MEXP{self.id_mexp}'
+        self.tree.node(current_mexp, 'mexp')
+        self.tree.edge(father, current_mexp)
+        self.parse_sexp(current_mexp)
+        self.id_sexp += 1
+        self.parse_mexp_aux(current_mexp)
+        self.id_mexp_aux += 1
+
+    def parse_mexp_aux(self, father):
+        current_mexp_aux = f'MEXP_AUX{self.id_mexp_aux}'
+        self.tree.node(current_mexp_aux, 'mexp_aux')
+        self.tree.edge(father, current_mexp_aux)
+
+        if self.peek()[1] == '*':
+            self.expect("op", "*", current_mexp_aux)
+            self.parse_sexp(current_mexp_aux)
+            self.id_sexp += 1
+            self.parse_mexp_aux(current_mexp_aux)
+            self.id_mexp_aux += 1
+
+    # Regra: SEXP -> ! SEXP | - SEXP | true | false | num | null | new int '[' EXP ']' | PEXP . length | PEXP '[' EXP ']' | PEXP
+    # Obs: Não foi alterada
+    def parse_sexp(self, father):
+        current_sexp = f'SEXP{self.id_sexp}'
+        self.tree.node(current_sexp, 'sexp')
+        self.tree.edge(father, current_sexp)
+        
+        token = self.peek()
+
+        if token[1] in ['!','-']:
+            self.expect("op", token[1], current_sexp)
+            self.parse_sexp(current_sexp)
+            self.id_sexp_aux += 1
+        elif token[1] in ['true', 'false', 'null']:
+            self.expect("key", token[1], current_sexp)
+        elif token[1] == "new":
+            # Quando começa com new pode ser tanto para o SEXP quanto para o PEXP
+            # O que determina é o token que vem depois
+            # Seria bom achar uma forma de ver mais à frente sem consumir
+            self.expect("key", token[1], current_sexp)
+            if self.peek()[1] == "int": # Mantém no SEXP
+                self.expect("type", "int", current_sexp)
+                self.expect("del", "[", current_sexp)
+                self.parse_exp(current_sexp)
+                self.id_exp += 1
+                self.expect("del", "]", current_sexp)
+            elif self.peek()[0] == "id": # Ir para o PEXP
+                self.parse_pexp(current_sexp, is_new = True)
+                self.id_pexp += 1
+            else: # Erro no programa
+                raise ValueError(f"Token inesperado: {self.peek()}")
+        elif token[0] == "num":
+            self.expect("num", token[1], current_sexp)
+        else:
+            self.parse_pexp(current_sexp)
+            self.id_pexp += 1
+            token = self.peek()
+            if token[1] == ".":
+                self.expect("del", token[1], current_sexp)
+                self.expect("key", "length", current_sexp)
+            elif token[1] == "[":
+                self.expect("del", token[1], current_sexp)
+                self.parse_exp(current_sexp)
+                self.id_exp += 1
+                self.expect("del", "]", current_sexp)
+    
+    # Regra original: PEXP -> id | this | new id '(' ')' | '(' EXP ')' | PEXP . id | PEXP . id '(' [EXPS] ')'
+    # Regra atual: PEXP -> id PEXP_AUX | this PEXP_AUX | new id '(' ')' PEXP_AUX | '(' EXP ')' PEXP_AUX
+    # Regra adicional: PEXP_AUX -> . id PEXP_AUX | . id '(' [EXPS] ')' PEXP_AUX | ε
+    # Obs: O parâmetro is_new ajuda a diferenciar o SEXP do PEXP
+    def parse_pexp(self, father, is_new = False):
+        current_pexp = f'PEXP{self.id_pexp}'
+        self.tree.node(current_pexp, 'pexp')
+        self.tree.edge(father, current_pexp)
+
+        token = self.peek()
+
+        if is_new: # O new já foi consumido pelo SEXP
+            self.expect("id", self.peek()[1], current_pexp)
+            self.expect("del", "(", current_pexp)
+            self.expect("del", ")", current_pexp)
+            self.parse_pexp_aux(current_pexp)
+            self.id_pexp_aux += 1
+        elif token[0] == "id":
+            self.expect("id", token[1], current_pexp)
+            self.parse_pexp_aux(current_pexp)
+            self.id_pexp_aux += 1
+        elif token[1] == "this":
+            self.expect("key", token[1], current_pexp)
+            self.parse_pexp_aux(current_pexp)
+            self.id_pexp_aux += 1
+        elif token[1] == "(":
+            self.expect("del", "(", current_pexp)
+            self.parse_exp(current_pexp)
+            self.expect("del", ")", current_pexp)
+            self.parse_pexp_aux(current_pexp)
+            self.id_pexp_aux += 1
+        else:
+            raise ValueError(f"Token inesperado: {self.peek()}")
+
+    def parse_pexp_aux(self, father):
+        current_pexp_aux = f'PEXP_AUX{self.id_pexp_aux}'
+        self.tree.node(current_pexp_aux, 'pexp_aux')
+        self.tree.edge(father, current_pexp_aux)
+
+        if self.peek()[1] == ".":
+            self.expect("del", ".", current_pexp_aux)
+            self.expect("id", self.peek()[1], current_pexp_aux)
+            if self.peek()[1] == '(':
+                self.expect("del", "(", current_pexp_aux)
+                if self.peek()[1] == ")": # EXPS é opcional
+                    self.expect("del", ")", current_pexp_aux)
+                else:
+                    self.parse_exps(current_pexp_aux)
+                    self.expect("del", ")", current_pexp_aux)
+            self.parse_pexp_aux(current_pexp_aux)
+            self.id_pexp_aux += 1
+
+    # Regra: EXPS -> EXP {, EXP}
+    # Obs: Não foi alterada
+    def parse_exps(self, father):
+        current_exps = f'EXPS{self.id_exps}'
+        self.tree.node(current_exps, 'exps')
+        self.tree.edge(father, current_exps)
+        self.parse_exp(current_exps)
+        self.id_exp += 1
+
+        while self.peek()[1] == ",":
+            self.expect("del", ",", current_exps)
+            self.parse_exp(current_exps)
+            self.id_exp += 1
 
     def parse_cmd(self, father):
         current_cmd = f'CMD{self.id_cmd}'
@@ -190,7 +411,7 @@ class MiniJavaParser:
         elif token[0] == "key" and token[1] == "if":  # Condicional: 'if (EXP) CMD else CMD'
             self.expect("key", "if", current_cmd)
             self.expect("del", "(", current_cmd)
-            #self.parse_exp(current_cmd)
+            self.parse_exp(current_cmd)
             self.expect("del", ")", current_cmd)
             self.id_cmd += 1
             self.parse_cmd(current_cmd)
@@ -202,7 +423,7 @@ class MiniJavaParser:
         elif token[0] == "key" and token[1] == "while":  # Laço: 'while (EXP) CMD'
             self.expect("key", "while", current_cmd)
             self.expect("del", "(", current_cmd)
-            #self.parse_exp(current_cmd)
+            self.parse_exp(current_cmd)
             self.expect("del", ")", current_cmd)
             self.id_cmd += 1
             self.parse_cmd(current_cmd)
@@ -210,22 +431,23 @@ class MiniJavaParser:
         elif token[0] == "key" and token[1] == "System.out.println":  # Print: 'System.out.println (EXP);'
             self.expect("key", "System.out.println", current_cmd)
             self.expect("del", "(", current_cmd)
-            #self.parse_exp(current_cmd)
+            self.parse_exp(current_cmd)  # Chama o parser de expressão
             self.expect("del", ")", current_cmd)
             self.expect("del", ";", current_cmd)
+
 
         elif token[0] == "id":  # Atribuição ou chamada de método
             self.expect("id", token[1], current_cmd)
             if self.peek()[0] == "op"  and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
                 self.expect("op", "=", current_cmd)
-                #self.parse_exp(current_cmd)
+                self.parse_exp(current_cmd)
                 self.expect("del", ";", current_cmd)
             elif  self.peek()[0] == "del"  and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
                 self.expect("del", "[", current_cmd)
-                #self.parse_exp(current_cmd)
+                self.parse_exp(current_cmd)
                 self.expect("del", "]", current_cmd)
                 self.expect("op", "=", current_cmd)
-                #self.parse_exp(current_cmd)
+                self.parse_exp(current_cmd)
                 self.expect("del", ";", current_cmd)
             
 
