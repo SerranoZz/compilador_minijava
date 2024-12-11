@@ -120,12 +120,14 @@ digraph {
 	CMD0 -> CMD1
 	34 [label="{"]
 	CMD1 -> 34
+	CMD2 [label=cmd]
+	CMD1 -> CMD2
 	35 [label=a]
-	CMD1 -> 35
+	CMD2 -> 35
 	36 [label="="]
-	CMD1 -> 36
+	CMD2 -> 36
 	EXP1 [label=exp]
-	CMD1 -> EXP1
+	CMD2 -> EXP1
 	REXP1 [label=rexp]
 	EXP1 -> REXP1
 	AEXP2 [label=aexp]
@@ -145,7 +147,7 @@ digraph {
 	EXP_AUX1 [label=exp_aux]
 	EXP1 -> EXP_AUX1
 	38 [label=";"]
-	CMD1 -> 38
+	CMD2 -> 38
 	CMD2 [label=cmd]
 	CMD1 -> CMD2
 	39 [label=b]
@@ -174,14 +176,14 @@ digraph {
 	EXP2 -> EXP_AUX2
 	42 [label=";"]
 	CMD2 -> 42
-	CMD3 [label=cmd]
-	CMD1 -> CMD3
+	CMD2 [label=cmd]
+	CMD1 -> CMD2
 	43 [label=c]
-	CMD3 -> 43
+	CMD2 -> 43
 	44 [label="="]
-	CMD3 -> 44
+	CMD2 -> 44
 	EXP3 [label=exp]
-	CMD3 -> EXP3
+	CMD2 -> EXP3
 	REXP3 [label=rexp]
 	EXP3 -> REXP3
 	AEXP4 [label=aexp]
@@ -190,50 +192,70 @@ digraph {
 	AEXP4 -> MEXP4
 	SEXP4 [label=sexp]
 	MEXP4 -> SEXP4
-	45 [label=3]
-	SEXP4 -> 45
+	PEXP2 [label=pexp]
+	SEXP4 -> PEXP2
+	45 [label=a]
+	PEXP2 -> 45
+	PEXP_AUX2 [label=pexp_aux]
+	PEXP2 -> PEXP_AUX2
 	MEXP_AUX4 [label=mexp_aux]
 	MEXP4 -> MEXP_AUX4
 	AEXP_AUX4 [label=aexp_aux]
 	AEXP4 -> AEXP_AUX4
+	46 [label="+"]
+	AEXP_AUX4 -> 46
+	MEXP5 [label=mexp]
+	AEXP_AUX4 -> MEXP5
+	SEXP5 [label=sexp]
+	MEXP5 -> SEXP5
+	PEXP3 [label=pexp]
+	SEXP5 -> PEXP3
+	47 [label=b]
+	PEXP3 -> 47
+	PEXP_AUX3 [label=pexp_aux]
+	PEXP3 -> PEXP_AUX3
+	MEXP_AUX5 [label=mexp_aux]
+	MEXP5 -> MEXP_AUX5
+	AEXP_AUX5 [label=aexp_aux]
+	AEXP_AUX4 -> AEXP_AUX5
 	REXP_AUX4 [label=rexp_aux]
 	REXP3 -> REXP_AUX4
 	EXP_AUX3 [label=exp_aux]
 	EXP3 -> EXP_AUX3
-	46 [label=";"]
-	CMD3 -> 46
-	47 [label="}"]
-	CMD1 -> 47
-	48 [label=return]
-	METODO0 -> 48
+	48 [label=";"]
+	CMD2 -> 48
+	49 [label="}"]
+	CMD1 -> 49
+	50 [label=return]
+	METODO0 -> 50
 	EXP4 [label=exp]
 	METODO0 -> EXP4
 	REXP4 [label=rexp]
 	EXP4 -> REXP4
 	AEXP5 [label=aexp]
 	REXP4 -> AEXP5
-	MEXP5 [label=mexp]
-	AEXP5 -> MEXP5
-	SEXP5 [label=sexp]
-	MEXP5 -> SEXP5
-	PEXP2 [label=pexp]
-	SEXP5 -> PEXP2
-	49 [label=a]
-	PEXP2 -> 49
-	PEXP_AUX2 [label=pexp_aux]
-	PEXP2 -> PEXP_AUX2
-	MEXP_AUX5 [label=mexp_aux]
-	MEXP5 -> MEXP_AUX5
-	AEXP_AUX5 [label=aexp_aux]
-	AEXP5 -> AEXP_AUX5
+	MEXP6 [label=mexp]
+	AEXP5 -> MEXP6
+	SEXP6 [label=sexp]
+	MEXP6 -> SEXP6
+	PEXP4 [label=pexp]
+	SEXP6 -> PEXP4
+	51 [label=a]
+	PEXP4 -> 51
+	PEXP_AUX4 [label=pexp_aux]
+	PEXP4 -> PEXP_AUX4
+	MEXP_AUX6 [label=mexp_aux]
+	MEXP6 -> MEXP_AUX6
+	AEXP_AUX6 [label=aexp_aux]
+	AEXP5 -> AEXP_AUX6
 	REXP_AUX5 [label=rexp_aux]
 	REXP4 -> REXP_AUX5
 	EXP_AUX4 [label=exp_aux]
 	EXP4 -> EXP_AUX4
-	50 [label=";"]
-	METODO0 -> 50
-	51 [label="}"]
-	METODO0 -> 51
-	52 [label="}"]
-	CLASSE0 -> 52
+	52 [label=";"]
+	METODO0 -> 52
+	53 [label="}"]
+	METODO0 -> 53
+	54 [label="}"]
+	CLASSE0 -> 54
 }

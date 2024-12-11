@@ -411,22 +411,23 @@ class MiniJavaParser:
 
         if token[0] == "del" and token[1] == "{":  # Bloco: '{ CMD }'
             self.expect("del", "{", current_cmd)
+            self.id_cmd += 1
             while self.peek()[1] != "}":
                 self.parse_cmd(current_cmd)
-                self.id_cmd += 1
             self.expect("del", "}", current_cmd)
 
         elif token[0] == "key" and token[1] == "if":  # Condicional: 'if (EXP) CMD else CMD'
             self.expect("key", "if", current_cmd)
             self.expect("del", "(", current_cmd)
             self.parse_exp(current_cmd)
+            self.id_exp += 1
             self.expect("del", ")", current_cmd)
             self.id_cmd += 1
             self.parse_cmd(current_cmd)
             if self.peek() == ("key", "else"):
                 self.expect("key", "else", current_cmd)
-                self.parse_cmd(current_cmd)
                 self.id_cmd += 1
+                self.parse_cmd(current_cmd)
 
         elif token[0] == "key" and token[1] == "while":  # Laço: 'while (EXP) CMD'
             self.expect("key", "while", current_cmd)
@@ -441,6 +442,7 @@ class MiniJavaParser:
             self.expect("key", "System.out.println", current_cmd)
             self.expect("del", "(", current_cmd)
             self.parse_exp(current_cmd)  # Chama o parser de expressão
+            self.id_exp += 1
             self.expect("del", ")", current_cmd)
             self.expect("del", ";", current_cmd)
 
