@@ -1,16 +1,16 @@
-class Factorial {
-    public static void main(String[] a) {
+class Factorial{
+    public static void main(String[] a){
         System.out.println(new Fac().ComputeFac(10));
     }
 }
-// Comentário de uma linha
 class Fac {
-    public int ComputeFac(int num) {
-        while(a < b){
-            a = 1;
-            b = 2;
-            c = a + b + d;
+    public int ComputeFac(int num){
+        int num_aux;
+        if (num < 1){
+            num_aux = 1;
+        }else{
+            num_aux = 2;
         }
-        return a;
+        return num_aux ;
     }
 }

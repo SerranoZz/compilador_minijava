@@ -91,7 +91,6 @@ class MiniJavaParser:
         self.expect("del","}", "MAIN")
         return
         
-
     def parse_class(self, father):
         current_class = f'CLASSE{self.id_class}'
         self.tree.node(current_class, 'classe')
@@ -119,7 +118,6 @@ class MiniJavaParser:
         
         self.expect("del", "}", current_class)
     
-
     def parse_var(self, father):
         current_var = f'VAR{self.id_var}'
         self.tree.node(current_var, "var")
@@ -129,7 +127,6 @@ class MiniJavaParser:
         self.expect("id", self.peek()[1], current_var)
         self.expect("del", ";", current_var)
     
-
     def parse_type(self, father):
         current_type = f'TYPE{self.id_type}'
         self.tree.node(current_type, "tipo")
@@ -175,8 +172,6 @@ class MiniJavaParser:
         self.expect("del", ";", current_method)
         self.expect("del", "}", current_method)
 
-
-
     def parse_params(self, father):
         current_params = f'PARAMS{self.id_params}'
         self.tree.node(current_params, "params")
@@ -190,6 +185,73 @@ class MiniJavaParser:
             self.parse_type(current_params)
             self.id_type += 1
             self.expect("id", self.peek()[1], current_params)
+
+    def parse_cmd(self, father):
+        current_cmd = f'CMD{self.id_cmd}'
+        if father != current_cmd:
+            self.tree.node(current_cmd, "cmd")
+            self.tree.edge(father, current_cmd)
+
+        token = self.peek()
+
+        if token[0] == "del" and token[1] == "{":  # Bloco: '{ CMD }'
+            self.expect("del", "{", current_cmd)
+            while self.peek()[1] != "}":
+                self.parse_cmd(current_cmd)
+                self.id_cmd += 1
+            self.expect("del", "}", current_cmd)
+
+        elif token[0] == "key" and token[1] == "if":  # Condicional: 'if (EXP) CMD else CMD'
+            self.expect("key", "if", current_cmd)
+            self.expect("del", "(", current_cmd)
+            self.parse_exp(current_cmd)
+            self.id_exp += 1
+            self.expect("del", ")", current_cmd)
+            self.parse_cmd(current_cmd)
+            self.id_cmd += 1
+            if self.peek() == ("key", "else"):
+                self.expect("key", "else", current_cmd)
+                self.parse_cmd(current_cmd)
+                self.id_cmd += 1
+
+        elif token[0] == "key" and token[1] == "while":  # Laço: 'while (EXP) CMD'
+            self.expect("key", "while", current_cmd)
+            self.expect("del", "(", current_cmd)
+            self.parse_exp(current_cmd)
+            self.id_exp += 1
+            self.expect("del", ")", current_cmd)
+            self.parse_cmd(current_cmd)
+            self.id_cmd += 1
+
+        elif token[0] == "key" and token[1] == "System.out.println":  # Print: 'System.out.println (EXP);'
+            self.expect("key", "System.out.println", current_cmd)
+            self.expect("del", "(", current_cmd)
+            self.parse_exp(current_cmd)  # Chama o parser de expressão
+            self.id_exp += 1
+            self.expect("del", ")", current_cmd)
+            self.expect("del", ";", current_cmd)
+
+
+        elif token[0] == "id":  # Atribuição ou chamada de método
+            self.expect("id", token[1], current_cmd)
+            if self.peek()[0] == "op" and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
+                self.expect("op", "=", current_cmd)
+                self.parse_exp(current_cmd)
+                self.id_exp += 1
+                self.expect("del", ";", current_cmd)
+            elif  self.peek()[0] == "del" and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
+                self.expect("del", "[", current_cmd)
+                self.parse_exp(current_cmd)
+                self.id_exp += 1
+                self.expect("del", "]", current_cmd)
+                self.expect("op", "=", current_cmd)
+                self.parse_exp(current_cmd)
+                self.id_exp += 1
+                self.expect("del", ";", current_cmd)
+            
+
+        else:
+            raise SyntaxError(f"Comando inválido ou inesperado: {token}")
         
     # Regra original: EXP -> EXP && REXP | REXP
     # Regra atual: EXP -> REXP EXP_AUX
@@ -210,8 +272,8 @@ class MiniJavaParser:
 
         while self.peek()[1] == '&&':
             self.expect("del", "&&", current_exp_aux) # Verificar se o token está pegando && ou apenas &
-            self.id_rexp += 1
             self.parse_rexp(current_exp_aux)
+            self.id_rexp += 1
             self.id_exp_aux += 1
             self.parse_exp_aux(current_exp_aux)
 
@@ -298,7 +360,7 @@ class MiniJavaParser:
 
         if token[1] in ['!','-']:
             self.expect("op", token[1], current_sexp)
-            self.id_sexp_aux += 1
+            self.id_sexp += 1
             self.parse_sexp(current_sexp)
         elif token[1] in ['true', 'false', 'null']:
             self.expect("key", token[1], current_sexp)
@@ -310,8 +372,8 @@ class MiniJavaParser:
             if self.peek()[1] == "int": # Mantém no SEXP
                 self.expect("type", "int", current_sexp)
                 self.expect("del", "[", current_sexp)
-                self.parse_exp(current_sexp)
                 self.id_exp += 1
+                self.parse_exp(current_sexp)
                 self.expect("del", "]", current_sexp)
             elif self.peek()[0] == "id": # Ir para o PEXP
                 self.parse_pexp(current_sexp, is_new = True)
@@ -329,8 +391,8 @@ class MiniJavaParser:
                 self.expect("key", "length", current_sexp)
             elif token[1] == "[":
                 self.expect("del", token[1], current_sexp)
-                self.parse_exp(current_sexp)
                 self.id_exp += 1
+                self.parse_exp(current_sexp)
                 self.expect("del", "]", current_sexp)
     
     # Regra original: PEXP -> id | this | new id '(' ')' | '(' EXP ')' | PEXP . id | PEXP . id '(' [EXPS] ')'
@@ -360,8 +422,8 @@ class MiniJavaParser:
             self.id_pexp_aux += 1
         elif token[1] == "(":
             self.expect("del", "(", current_pexp)
-            self.parse_exp(current_pexp)
             self.id_exp += 1   
+            self.parse_exp(current_pexp)
             self.expect("del", ")", current_pexp)
             self.parse_pexp_aux(current_pexp)
             self.id_pexp_aux += 1
@@ -394,81 +456,20 @@ class MiniJavaParser:
         self.tree.node(current_exps, 'exps')
         self.tree.edge(father, current_exps)
         self.id_exp += 1
+        self.id_exp_aux += 1
         self.id_rexp += 1
+        self.id_rexp_aux += 1
         self.id_aexp += 1
+        self.id_aexp_aux += 1
         self.id_mexp += 1
+        self.id_mexp_aux += 1
         self.id_sexp += 1
+        self.id_sexp_aux += 1
         self.id_pexp += 1
+        self.id_pexp_aux += 1
         self.parse_exp(current_exps)
 
         while self.peek()[1] == ",":
             self.expect("del", ",", current_exps)
+            self.id_exp += 1
             self.parse_exp(current_exps)
-            self.id_exp += 1
-
-    def parse_cmd(self, father):
-        current_cmd = f'CMD{self.id_cmd}'
-        if father != current_cmd:
-            self.tree.node(current_cmd, "cmd")
-            self.tree.edge(father, current_cmd)
-
-        token = self.peek()
-
-        if token[0] == "del" and token[1] == "{":  # Bloco: '{ CMD }'
-            self.expect("del", "{", current_cmd)
-            self.id_cmd += 1
-            while self.peek()[1] != "}":
-                self.parse_cmd(current_cmd)
-            self.expect("del", "}", current_cmd)
-
-        elif token[0] == "key" and token[1] == "if":  # Condicional: 'if (EXP) CMD else CMD'
-            self.expect("key", "if", current_cmd)
-            self.expect("del", "(", current_cmd)
-            self.parse_exp(current_cmd)
-            self.id_exp += 1
-            self.expect("del", ")", current_cmd)
-            self.id_cmd += 1
-            self.parse_cmd(current_cmd)
-            if self.peek() == ("key", "else"):
-                self.expect("key", "else", current_cmd)
-                self.id_cmd += 1
-                self.parse_cmd(current_cmd)
-
-        elif token[0] == "key" and token[1] == "while":  # Laço: 'while (EXP) CMD'
-            self.expect("key", "while", current_cmd)
-            self.expect("del", "(", current_cmd)
-            self.parse_exp(current_cmd)
-            self.id_exp += 1
-            self.expect("del", ")", current_cmd)
-            self.id_cmd += 1
-            self.parse_cmd(current_cmd)
-
-        elif token[0] == "key" and token[1] == "System.out.println":  # Print: 'System.out.println (EXP);'
-            self.expect("key", "System.out.println", current_cmd)
-            self.expect("del", "(", current_cmd)
-            self.parse_exp(current_cmd)  # Chama o parser de expressão
-            self.id_exp += 1
-            self.expect("del", ")", current_cmd)
-            self.expect("del", ";", current_cmd)
-
-
-        elif token[0] == "id":  # Atribuição ou chamada de método
-            self.expect("id", token[1], current_cmd)
-            if self.peek()[0] == "op"  and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
-                self.expect("op", "=", current_cmd)
-                self.parse_exp(current_cmd)
-                self.id_exp += 1
-                self.expect("del", ";", current_cmd)
-            elif  self.peek()[0] == "del"  and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
-                self.expect("del", "[", current_cmd)
-                self.parse_exp(current_cmd)
-                self.id_exp += 1
-                self.expect("del", "]", current_cmd)
-                self.expect("op", "=", current_cmd)
-                self.parse_exp(current_cmd)
-                self.id_exp += 1
-                self.expect("del", ";", current_cmd)
-            
-
-        else:
-            raise SyntaxError(f"Comando inválido ou inesperado: {token}")
