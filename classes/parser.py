@@ -151,22 +151,27 @@ class MiniJavaParser:
         self.expect("id", self.peek()[1], current_method)
         self.expect("del", "(", current_method)
         
-        if self.peek()[0] == "type":
+        while self.peek()[1] != ")":
             self.parse_params(current_method)
             self.id_params += 1
-
         self.expect("del", ")", current_method)
+
         self.expect("del", "{", current_method)
 
-        if self.peek()[0] == "type":
+        while self.peek()[0] == "type":
             self.parse_var(current_method)
             self.id_var += 1
 
-        while self.peek()[1] != "}":
+        while self.peek()[1] != "return":
             print(f'Entrei no parser_cmd pela 1 vez: {self.peek()}')
             self.parse_cmd(current_method)
             self.id_cmd += 1
-        
+        self.expect("key", "return", current_method)
+
+        self.parse_exp(current_method)
+        self.id_exp += 1
+
+        self.expect("del", ";", current_method)
         self.expect("del", "}", current_method)
 
 
