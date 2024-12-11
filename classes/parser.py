@@ -84,8 +84,9 @@ class MiniJavaParser:
         self.expect("del",")", "MAIN")
         self.expect("del","{", "MAIN")
         
-        self.parse_cmd("MAIN")
-        self.id_cmd += 1
+        while self.peek()[1] != "}":
+            self.parse_cmd("MAIN")
+            self.id_cmd += 1
 
         self.expect("del","}", "MAIN")
         return
@@ -192,7 +193,7 @@ class MiniJavaParser:
         
     # Regra original: EXP -> EXP && REXP | REXP
     # Regra atual: EXP -> REXP EXP_AUX
-    # Regra adicional: EXP_AUX -> && EXP_AUX | ε    
+    # Regra adicional: EXP_AUX -> && REXP EXP_AUX | ε    
     def parse_exp(self, father):
         current_exp = f'EXP{self.id_exp}'
         self.tree.node(current_exp, 'exp')
@@ -207,16 +208,16 @@ class MiniJavaParser:
         self.tree.node(current_exp_aux, 'exp_aux')
         self.tree.edge(father, current_exp_aux)
 
-        if self.peek()[1] == '&&':
+        while self.peek()[1] == '&&':
             self.expect("del", "&&", current_exp_aux) # Verificar se o token está pegando && ou apenas &
-            self.parse_rexp(current_exp_aux)
             self.id_rexp += 1
-            self.parse_exp_aux(current_exp_aux)
+            self.parse_rexp(current_exp_aux)
             self.id_exp_aux += 1
+            self.parse_exp_aux(current_exp_aux)
 
     # Regra original: REXP -> REXP < AEXP | REXP > AEXP | REXP == AEXP | REXP != AEXP | AEXP
     # Regra atual: REXP -> AEXP REXP_AUX
-    # Regra adicional: REXP_AUX -> < REXP_AUX | > REXP_AUX | == REXP_AUX | != REXP_AUX | ε  
+    # Regra adicional: REXP_AUX -> < AEXP REXP_AUX | == AEXP REXP_AUX | != AEXP REXP_AUX | ε  
     def parse_rexp(self, father):
         current_rexp = f'REXP{self.id_rexp}'
         self.tree.node(current_rexp, 'rexp')
@@ -231,12 +232,12 @@ class MiniJavaParser:
         self.tree.node(current_rexp_aux, 'rexp_aux')
         self.tree.edge(father, current_rexp_aux)
 
-        if self.peek()[1] in ['<', '>', '==', '!=']: # Verificar se o token está pegando == e != ou apenas = e !
+        while self.peek()[1] in ['<', '==', '!=']: # Verificar se o token está pegando == e != ou apenas = e !
             self.expect("op", self.peek()[1], current_rexp_aux)
             self.parse_aexp(current_rexp_aux)
             self.id_aexp += 1
-            self.parse_rexp_aux(current_rexp_aux)
             self.id_rexp_aux += 1
+            self.parse_rexp_aux(current_rexp_aux)
 
     # Regra original: AEXP -> AEXP + MEXP | AEXP - MEXP | MEXP
     # Regra atual: AEXP -> MEXP AEXP_AUX
@@ -255,12 +256,12 @@ class MiniJavaParser:
         self.tree.node(current_aexp_aux, 'aexp_aux')
         self.tree.edge(father, current_aexp_aux)
 
-        if self.peek()[1] in ['+', '-']:
+        while self.peek()[1] in ['+', '-']:
             self.expect("op", self.peek()[1], current_aexp_aux)
             self.parse_mexp(current_aexp_aux)
             self.id_mexp += 1
-            self.parse_aexp_aux(current_aexp_aux)
             self.id_aexp_aux += 1
+            self.parse_aexp_aux(current_aexp_aux)
 
     # Regra original: MEXP -> MEXP * SEXP | SEXP
     # Regra atual: MEXP -> SEXP MEXP_AUX
@@ -279,12 +280,12 @@ class MiniJavaParser:
         self.tree.node(current_mexp_aux, 'mexp_aux')
         self.tree.edge(father, current_mexp_aux)
 
-        if self.peek()[1] == '*':
+        while self.peek()[1] == '*':
             self.expect("op", "*", current_mexp_aux)
             self.parse_sexp(current_mexp_aux)
             self.id_sexp += 1
-            self.parse_mexp_aux(current_mexp_aux)
             self.id_mexp_aux += 1
+            self.parse_mexp_aux(current_mexp_aux)
 
     # Regra: SEXP -> ! SEXP | - SEXP | true | false | num | null | new int '[' EXP ']' | PEXP . length | PEXP '[' EXP ']' | PEXP
     # Obs: Não foi alterada
@@ -297,8 +298,8 @@ class MiniJavaParser:
 
         if token[1] in ['!','-']:
             self.expect("op", token[1], current_sexp)
-            self.parse_sexp(current_sexp)
             self.id_sexp_aux += 1
+            self.parse_sexp(current_sexp)
         elif token[1] in ['true', 'false', 'null']:
             self.expect("key", token[1], current_sexp)
         elif token[1] == "new":
@@ -360,6 +361,7 @@ class MiniJavaParser:
         elif token[1] == "(":
             self.expect("del", "(", current_pexp)
             self.parse_exp(current_pexp)
+            self.id_exp += 1   
             self.expect("del", ")", current_pexp)
             self.parse_pexp_aux(current_pexp)
             self.id_pexp_aux += 1
@@ -380,9 +382,10 @@ class MiniJavaParser:
                     self.expect("del", ")", current_pexp_aux)
                 else:
                     self.parse_exps(current_pexp_aux)
+                    self.id_exps += 1
                     self.expect("del", ")", current_pexp_aux)
-            self.parse_pexp_aux(current_pexp_aux)
             self.id_pexp_aux += 1
+            self.parse_pexp_aux(current_pexp_aux)
 
     # Regra: EXPS -> EXP {, EXP}
     # Obs: Não foi alterada
@@ -429,6 +432,7 @@ class MiniJavaParser:
             self.expect("key", "while", current_cmd)
             self.expect("del", "(", current_cmd)
             self.parse_exp(current_cmd)
+            self.id_exp += 1
             self.expect("del", ")", current_cmd)
             self.id_cmd += 1
             self.parse_cmd(current_cmd)
@@ -446,13 +450,16 @@ class MiniJavaParser:
             if self.peek()[0] == "op"  and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
                 self.expect("op", "=", current_cmd)
                 self.parse_exp(current_cmd)
+                self.id_exp += 1
                 self.expect("del", ";", current_cmd)
             elif  self.peek()[0] == "del"  and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
                 self.expect("del", "[", current_cmd)
                 self.parse_exp(current_cmd)
+                self.id_exp += 1
                 self.expect("del", "]", current_cmd)
                 self.expect("op", "=", current_cmd)
                 self.parse_exp(current_cmd)
+                self.id_exp += 1
                 self.expect("del", ";", current_cmd)
             
 

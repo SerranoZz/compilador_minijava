@@ -13,7 +13,7 @@ class MiniJavaScanner:
             ("type", r"\b(boolean|int)\b"),
             ("id", r"[a-zA-Z_][a-zA-Z0-9_]*"),
             ("num", r"\b\d+\b"),
-            ("op", r"[+\-*/=<>!]"),
+            ("op", r"[+\-*/=<>!&]"),
             ("del", r"[{}()\[\];.,]"),
             ("blank", r"\s+"),  # O compilador vai ignorar espaços em branco
         ]
