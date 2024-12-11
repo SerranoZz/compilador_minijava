@@ -393,8 +393,13 @@ class MiniJavaParser:
         current_exps = f'EXPS{self.id_exps}'
         self.tree.node(current_exps, 'exps')
         self.tree.edge(father, current_exps)
-        self.parse_exp(current_exps)
         self.id_exp += 1
+        self.id_rexp += 1
+        self.id_aexp += 1
+        self.id_mexp += 1
+        self.id_sexp += 1
+        self.id_pexp += 1
+        self.parse_exp(current_exps)
 
         while self.peek()[1] == ",":
             self.expect("del", ",", current_exps)
