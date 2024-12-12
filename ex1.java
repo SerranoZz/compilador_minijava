@@ -9,7 +9,7 @@ class Fac {
         if (num < 1){
             num_aux = 1;
         }else{
-            num_aux = 2;
+            num_aux = num * (this.ComputeFac(num-1));
         }
         return num_aux ;
     }

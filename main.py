@@ -11,7 +11,7 @@ else:
     try:
         tokens = scanner.scan(sys.argv[1])
         for token in tokens:
-            print(f'{token} - {i}')
+            #print(f'{token} - {i}')
             i += 1
     except Exception as e:
         print(f"Erro: {e}")
