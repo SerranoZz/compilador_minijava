@@ -1,16 +1,20 @@
-class Factorial{
-    public static void main(String[] a){
-        System.out.println(new Fac().ComputeFac(10));
+class Main {
+    public static void main(String[] args) {
+        System.out.println(new Test().compute(10, 20));
     }
 }
-class Fac {
-    public int ComputeFac(int num){
-        int num_aux;
-        if (num < 1){
-            num_aux = 1;
-        }else{
-            num_aux = num * (this.ComputeFac(num-1));
+
+class Test {
+    public int compute(int a, int b) {
+        int result;
+        if (a != b <= d == c) {
+            result = a + b;
+        } else {
+            result = a - b;
         }
-        return num_aux ;
+        while(a < b){
+            result = a * b;
+        }
+        return result;
     }
 }
