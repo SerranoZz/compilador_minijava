@@ -57,7 +57,6 @@ class MiniJavaParser:
             self.advance()
             return token
         
-
     def expect(self, category, value, father):
         """Garante que o token atual é o esperado; caso contrário, gera um erro."""
         token = self.match(category, value)
@@ -248,28 +247,30 @@ class MiniJavaParser:
         elif token[0] == "key" and token[1] == "System.out.println":  # Print: 'System.out.println (EXP);'
             self.expect("key", "System.out.println", current_cmd)
             self.expect("del", "(", current_cmd)
-            self.parse_exp(current_cmd)  # Chama o parser de expressão
+            self.parse_exp(current_cmd)  
             self.expect("del", ")", current_cmd)
             self.expect("del", ";", current_cmd)
 
 
         elif token[0] == "id":  # Atribuição ou chamada de método
             self.expect("id", token[1], current_cmd)
-            if self.peek()[0] == "op" and self.peek()[1] == "=":  # Atribuição: 'id = EXP;'
+            if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
                 self.parse_exp(current_cmd)
                 self.expect("del", ";", current_cmd)
-            elif  self.peek()[0] == "del" and self.peek()[1] == "[":  # Atribuição com índice: 'id[EXP] = EXP;'
+            elif  self.peek()[0] == "del" and self.peek()[1] == "[":  
                 self.expect("del", "[", current_cmd)
                 self.parse_exp(current_cmd)
                 self.expect("del", "]", current_cmd)
                 self.expect("op", "=", current_cmd)
                 self.parse_exp(current_cmd)
                 self.expect("del", ";", current_cmd)
-            
-
+    
         else:
-            raise SyntaxError(f"Comando inválido ou inesperado: {token}")
+            if self.peek()[1] == "}":
+                return
+            else:
+                raise SyntaxError(f"Comando inválido ou inesperado: {token}")
         
     # Regra original: EXP -> EXP && REXP | REXP
     # Regra atual: EXP -> REXP EXP_AUX
@@ -297,7 +298,7 @@ class MiniJavaParser:
         
         while self.peek()[1] == '&':
             self.expect("op", "&", current_exp_aux)
-            self.expect("op", "&", current_exp_aux) # Verificar se o token está pegando && ou apenas &
+            self.expect("op", "&", current_exp_aux) 
             self.parse_rexp(current_exp_aux)
             self.parse_exp_aux(current_exp_aux)
             has_son = True
@@ -328,7 +329,7 @@ class MiniJavaParser:
         self.tree.node(current_rexp_aux, 'rexp_aux')
         self.tree.edge(father, current_rexp_aux)
 
-        while self.peek()[1] in ['<', '=', '!']: # Verificar se o token está pegando == e != ou apenas = e !
+        while self.peek()[1] in ['<', '=', '!']:
             self.expect("op", self.peek()[1], current_rexp_aux)
             if self.peek()[1] == "=":
                 self.expect("op", "=", current_rexp_aux)
