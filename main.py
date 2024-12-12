@@ -10,12 +10,9 @@ else:
     i = 0
     try:
         tokens = scanner.scan(sys.argv[1])
-        for token in tokens:
-            print(f'{token} - {i}')
-            i += 1
+        parser = MiniJavaParser(tokens)
+        parser.parse_prog()
+        parser.tree.render('./outputs/tree', format='png')
+        print("Árvore gerada com sucesso. Arquivo criado em 'outputs/tree.png'")
     except Exception as e:
         print(f"Erro: {e}")
-
-    parser = MiniJavaParser(tokens)
-    parser.parse_prog()
-    parser.tree.render('./outputs/tree', format='png')

@@ -185,7 +185,6 @@ class MiniJavaParser:
             self.parse_var(current_method)
 
         while self.peek()[1] != "return":
-            print(f'Entrei no parser_cmd pela 1 vez: {self.peek()}')
             self.parse_cmd(current_method)
         self.expect("key", "return", current_method)
 
