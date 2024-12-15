@@ -80,5 +80,5 @@ Dado o código acima (`exemplo.java`), a saída será:
 
 ---
 
-## Próximos Passos
-- **Integração com o analisador sintático**: Em desenvolvimento para verificar a estrutura gramatical dos tokens identificados.
+## Mais informações
+- **Veja o relatório para saber mais sobre o programa como um todo (Scanner + Parser).
