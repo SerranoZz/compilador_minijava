@@ -1,8 +1,9 @@
 from graphviz import Digraph
-
+from symtable 
 class MiniJavaParser:
     def __init__(self, tokens):
         self.tokens = tokens
+        self.symbol_table = SymbolTable()
         self.current = 0
         self.id_class = 0
         self.id_method = 0
@@ -25,19 +26,6 @@ class MiniJavaParser:
         self.id_exps = 0
         self.id_epsilon = 0
         self.tree = Digraph()
-
-    def node_exists(self, node_id):
-        return any(node_id in line for line in self.tree.body)
-    
-    def epsilon(self, father, has_son):
-        current_epsilon = f'EPSILON{self.id_epsilon}'
-        if self.node_exists(current_epsilon):
-            self.id_epsilon += 1
-            current_epsilon = f'EPSILON{self.id_epsilon}'
-
-        if not has_son:
-            self.tree.node(current_epsilon, 'ε')
-            self.tree.edge(father, current_epsilon)
 
     def peek(self):
         """Retorna o token atual sem consumir."""
@@ -65,6 +53,20 @@ class MiniJavaParser:
 
         self.tree.node(f'{self.current}', f'{value}')
         self.tree.edge(father, f'{self.current}')
+    
+    
+    def node_exists(self, node_id):
+        return any(node_id in line for line in self.tree.body)
+    
+    def epsilon(self, father, has_son):
+        current_epsilon = f'EPSILON{self.id_epsilon}'
+        if self.node_exists(current_epsilon):
+            self.id_epsilon += 1
+            current_epsilon = f'EPSILON{self.id_epsilon}'
+
+        if not has_son:
+            self.tree.node(current_epsilon, 'ε')
+            self.tree.edge(father, current_epsilon)
     
     #Início do Parser
     def parse_prog(self):
@@ -232,6 +234,7 @@ class MiniJavaParser:
             self.parse_exp(current_cmd)
             self.expect("del", ")", current_cmd)
             self.parse_cmd(current_cmd)
+            print(self.peek())
             if self.peek() == ("key", "else"):
                 self.expect("key", "else", current_cmd)
                 self.parse_cmd(current_cmd)
