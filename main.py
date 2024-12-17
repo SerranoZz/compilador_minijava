@@ -2,6 +2,7 @@ import sys
 from classes.scanner import MiniJavaScanner
 from classes.parser import MiniJavaParser
 
+
 # Verificar se o nome do arquivo foi fornecido como argumento
 if len(sys.argv) < 2:
     print("Passe o nome de um arquivo.java como argumento")
@@ -14,5 +15,6 @@ else:
         parser.parse_prog()
         parser.tree.render('./outputs/tree', format='png')
         print("Árvore gerada com sucesso. Arquivo criado em 'outputs/tree.png'")
+        parser.symbol_table.print_table()
     except Exception as e:
         print(f"Erro: {e}")

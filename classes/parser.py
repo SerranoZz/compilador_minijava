@@ -1,9 +1,8 @@
 from graphviz import Digraph
-from symtable 
+from classes.symtable import SymbolTable
 class MiniJavaParser:
     def __init__(self, tokens):
         self.tokens = tokens
-        self.symbol_table = SymbolTable()
         self.current = 0
         self.id_class = 0
         self.id_method = 0
@@ -25,6 +24,7 @@ class MiniJavaParser:
         self.id_pexp_aux = 0
         self.id_exps = 0
         self.id_epsilon = 0
+        self.symbol_table = SymbolTable()
         self.tree = Digraph()
 
     def peek(self):
@@ -67,6 +67,8 @@ class MiniJavaParser:
         if not has_son:
             self.tree.node(current_epsilon, 'ε')
             self.tree.edge(father, current_epsilon)
+        
+        return has_son
     
     #Início do Parser
     def parse_prog(self):
@@ -80,7 +82,6 @@ class MiniJavaParser:
             self.parse_class("PROG")
             self.id_class += 1
 
-    
     ### Funções das especificações da EBNF
     # MAIN
     def parse_main(self):
@@ -106,19 +107,22 @@ class MiniJavaParser:
         return
         
     def parse_class(self, father):
+        self.symbol_table.enter_scope()
+
         current_class = f'CLASSE{self.id_class}'
         if self.node_exists(current_class):
             self.id_class += 1
             current_class = f'CLASSE{self.id_class}'
-
         self.tree.node(current_class, 'classe')
         self.tree.edge(father, current_class)
 
         self.expect("key","class", current_class)
+        self.symbol_table.add_symbol(self.peek()[1], "class")
         self.expect("id", self.peek()[1], current_class)
 
         if self.peek()[1] == "extends":
             self.expect("key", "extends", current_class)
+            self.symbol_table.find_symbol(self.peek()[1])
             self.expect("id", self.peek()[1], current_class)
 
         self.expect("del","{", current_class)
@@ -141,44 +145,57 @@ class MiniJavaParser:
         if self.node_exists(current_var):
             self.id_var += 1
             current_var = f'VAR{self.id_var}'
-
         self.tree.node(current_var, "var")
         self.tree.edge(father, current_var)
-        self.parse_type(current_var)
+        
+        var_type = self.parse_type(current_var)
+        self.symbol_table.add_symbol(self.peek()[1], var_type)
         self.expect("id", self.peek()[1], current_var)
         self.expect("del", ";", current_var)
     
     def parse_type(self, father):
+        var_type = ''
         current_type = f'TYPE{self.id_type}'
         if self.node_exists(current_type):
             self.id_type += 1
             current_type = f'TYPE{self.id_type}'
-
         self.tree.node(current_type, "tipo")
         self.tree.edge(father, current_type)
+        
         if self.peek()[1] == "int":
+            var_type = 'int'
             self.expect("type", "int", current_type)
             if self.peek()[1] == "[":
                 self.expect("del", "[", current_type)
                 self.expect("del", "]", current_type)
+                var_type = 'array'
         else:
+            var_type = self.peek()[1]
             self.expect("type" or "id", self.peek()[1], current_type)
+        
+        return var_type
                 
     def parse_method(self, father):
+        self.symbol_table.enter_scope()
+
+        params = []
         current_method = f'METODO{self.id_method}'
         if self.node_exists(current_method):
             self.id_method += 1
             current_method = f'METODO{self.id_method}'
-
         self.tree.node(current_method, "metodo")
         self.tree.edge(father, current_method)
+
         self.expect("key", "public", current_method)
-        self.parse_type(current_method)
+        method_var = self.parse_type(current_method)
+        method_name = self.peek()[1]
         self.expect("id", self.peek()[1], current_method)
         self.expect("del", "(", current_method)
-        
+
         while self.peek()[1] != ")":
-            self.parse_params(current_method)
+            params = self.parse_params(current_method)
+
+        self.symbol_table.add_symbol(method_name, method_var,params)
 
         self.expect("del", ")", current_method)
         self.expect("del", "{", current_method)
@@ -196,6 +213,7 @@ class MiniJavaParser:
         self.expect("del", "}", current_method)
 
     def parse_params(self, father):
+        params = []
         current_params = f'PARAMS{self.id_params}'
         if self.node_exists(current_params):
             self.id_params += 1
@@ -203,13 +221,17 @@ class MiniJavaParser:
 
         self.tree.node(current_params, "params")
         self.tree.edge(father, current_params)
-        self.parse_type(current_params)
+        params_type = self.parse_type(current_params)
+        params.append(f'{params_type}')
         self.expect("id", self.peek()[1], current_params)
         
         while self.peek()[1] != ")":
             self.expect("del", ",", current_params)
-            self.parse_type(current_params)
+            params_type = self.parse_type(current_params)
+            params.append(f'{params_type}')
             self.expect("id", self.peek()[1], current_params)
+
+        return params
 
     def parse_cmd(self, father):
         current_cmd = f'CMD{self.id_cmd}'
@@ -234,7 +256,6 @@ class MiniJavaParser:
             self.parse_exp(current_cmd)
             self.expect("del", ")", current_cmd)
             self.parse_cmd(current_cmd)
-            print(self.peek())
             if self.peek() == ("key", "else"):
                 self.expect("key", "else", current_cmd)
                 self.parse_cmd(current_cmd)
@@ -255,6 +276,7 @@ class MiniJavaParser:
 
 
         elif token[0] == "id":  # Atribuição ou chamada de método
+            self.symbol_table.find_symbol(token[1])
             self.expect("id", token[1], current_cmd)
             if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
