@@ -4,11 +4,11 @@ class Factorial{
     }
 }
 class Fac {
-    int alo;
+    int [] alo;
     public int ComputeFac(int num){
         int num_aux;
         if (num < 1)
-            num_aux = 1;
+            num_aux = alo.length;
         else
             num_aux = num * (this.ComputeFac(num-1));
         return num_aux ;

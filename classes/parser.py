@@ -27,6 +27,21 @@ class MiniJavaParser:
         self.symbol_table = SymbolTable()
         self.tree = Digraph()
 
+    def find_second_class_position(self):
+        first_class_pos = None
+        second_class_pos = None
+
+        # Itera pelos self.tokens para encontrar o primeiro "key" "class"
+        for index, (token_type, token_value) in enumerate(self.tokens):
+            if token_type == "key" and token_value == "class":
+                if first_class_pos is None:
+                    first_class_pos = index
+                elif first_class_pos is not None and second_class_pos is None:
+                    second_class_pos = index
+                    break  # Encontrou o segundo "class", não precisamos continuar
+
+        return second_class_pos
+            
     def peek(self):
         """Retorna o token atual sem consumir."""
         if self.current < len(self.tokens):
@@ -75,12 +90,14 @@ class MiniJavaParser:
         self.tree.node('PROG', 'prog')
         self.tree.node('MAIN', 'main')
         self.tree.edge('PROG', 'MAIN')
+        self.current = self.find_second_class_position()
+        if self.current is not None:
+            while self.match("key", "class"):
+                self.current -= 1  # Voltar para não consumir o "CLASS"
+                self.parse_class("PROG")
+                self.id_class += 1
+        self.current = 0
         self.parse_main()
-        self.current += 1
-        while self.match("key", "class"):
-            self.current -= 1  # Voltar para não consumir o "CLASS"
-            self.parse_class("PROG")
-            self.id_class += 1
 
     ### Funções das especificações da EBNF
     # MAIN
@@ -168,7 +185,7 @@ class MiniJavaParser:
             if self.peek()[1] == "[":
                 self.expect("del", "[", current_type)
                 self.expect("del", "]", current_type)
-                var_type = 'array'
+                var_type = 'array int'
         else:
             var_type = self.peek()[1]
             self.expect("type" or "id", self.peek()[1], current_type)
@@ -195,7 +212,7 @@ class MiniJavaParser:
         while self.peek()[1] != ")":
             params = self.parse_params(current_method)
 
-        self.symbol_table.add_symbol(method_name, method_var,params)
+        self.symbol_table.add_symbol(method_name, f'method {method_var}',params)
 
         self.expect("del", ")", current_method)
         self.expect("del", "{", current_method)
@@ -218,11 +235,12 @@ class MiniJavaParser:
         if self.node_exists(current_params):
             self.id_params += 1
             current_params = f'PARAMS{self.id_params}'
-
         self.tree.node(current_params, "params")
         self.tree.edge(father, current_params)
+
         params_type = self.parse_type(current_params)
         params.append(f'{params_type}')
+        self.symbol_table.add_symbol(self.peek()[1], f'param {params_type}')
         self.expect("id", self.peek()[1], current_params)
         
         while self.peek()[1] != ")":
@@ -289,7 +307,6 @@ class MiniJavaParser:
                 self.expect("op", "=", current_cmd)
                 self.parse_exp(current_cmd)
                 self.expect("del", ";", current_cmd)
-    
         else:
             if self.peek()[1] == "}":
                 return
@@ -307,11 +324,14 @@ class MiniJavaParser:
         
         self.tree.node(current_exp, 'exp')
         self.tree.edge(father, current_exp)
-        self.parse_rexp(current_exp)
-        self.parse_exp_aux(current_exp)
+        left = self.parse_rexp(current_exp)
+        right = self.parse_exp_aux(current_exp)
+
+        return [left, right]
 
     def parse_exp_aux(self, father):
         has_son = False
+        result = []
         current_exp_aux = f'EXP_AUX{self.id_exp_aux}'
         if self.node_exists(current_exp_aux):
             self.id_exp_aux += 1
@@ -323,11 +343,15 @@ class MiniJavaParser:
         while self.peek()[1] == '&':
             self.expect("op", "&", current_exp_aux)
             self.expect("op", "&", current_exp_aux) 
-            self.parse_rexp(current_exp_aux)
-            self.parse_exp_aux(current_exp_aux)
+            left = self.parse_rexp(current_exp_aux)
+            result.append(left)
+            right = self.parse_exp_aux(current_exp_aux)
+            result.append(left)
             has_son = True
-        
+    
         self.epsilon(current_exp_aux, has_son)
+
+        return result
 
     # Regra original: REXP -> REXP < AEXP | REXP > AEXP | REXP == AEXP | REXP != AEXP | AEXP
     # Regra atual: REXP -> AEXP REXP_AUX
@@ -340,10 +364,13 @@ class MiniJavaParser:
 
         self.tree.node(current_rexp, 'rexp')
         self.tree.edge(father, current_rexp)
-        self.parse_aexp(current_rexp)
-        self.parse_rexp_aux(current_rexp)
+        left = self.parse_aexp(current_rexp)
+        right = self.parse_rexp_aux(current_rexp)
+
+        return [left, right]
 
     def parse_rexp_aux(self, father):
+        result = []
         has_son = False
         current_rexp_aux = f'REXP_AUX{self.id_rexp_aux}'
         if self.node_exists(current_rexp_aux):
@@ -358,11 +385,15 @@ class MiniJavaParser:
             if self.peek()[1] == "=":
                 self.expect("op", "=", current_rexp_aux)
 
-            self.parse_aexp(current_rexp_aux)
-            self.parse_rexp_aux(current_rexp_aux)
+            left = self.parse_aexp(current_rexp_aux)
+            result.append(left)
+            right = self.parse_rexp_aux(current_rexp_aux)
+            result.append(right)
             has_son = True
         
         self.epsilon(current_rexp_aux, has_son)
+
+        return result
         
 
 
@@ -374,13 +405,16 @@ class MiniJavaParser:
         if self.node_exists(current_aexp):
             self.id_aexp += 1
             current_aexp = f'AEXP{self.id_aexp}'
-
         self.tree.node(current_aexp, 'aexp')
         self.tree.edge(father, current_aexp)
-        self.parse_mexp(current_aexp)
-        self.parse_aexp_aux(current_aexp)
+
+        left = self.parse_mexp(current_aexp)
+        right = self.parse_aexp_aux(current_aexp)
+
+        return [left, right]
 
     def parse_aexp_aux(self, father):
+        result = []
         has_son = False
         current_aexp_aux = f'AEXP_AUX{self.id_aexp_aux}'
         if self.node_exists(current_aexp_aux):
@@ -392,11 +426,15 @@ class MiniJavaParser:
 
         while self.peek()[1] in ['+', '-']:
             self.expect("op", self.peek()[1], current_aexp_aux)
-            self.parse_mexp(current_aexp_aux)
-            self.parse_aexp_aux(current_aexp_aux)
+            left = self.parse_mexp(current_aexp_aux)
+            result.append(left)
+            right = self.parse_aexp_aux(current_aexp_aux)
+            result.append(right)
             has_son = True
         
         self.epsilon(current_aexp_aux, has_son)
+
+        return result
 
     # Regra original: MEXP -> MEXP * SEXP | SEXP
     # Regra atual: MEXP -> SEXP MEXP_AUX
@@ -409,10 +447,13 @@ class MiniJavaParser:
 
         self.tree.node(current_mexp, 'mexp')
         self.tree.edge(father, current_mexp)
-        self.parse_sexp(current_mexp)
-        self.parse_mexp_aux(current_mexp)
+        left = self.parse_sexp(current_mexp)
+        right = self.parse_mexp_aux(current_mexp)
+
+        return [left, right]
 
     def parse_mexp_aux(self, father):
+        result = []
         has_son = False
         current_mexp_aux = f'MEXP_AUX{self.id_mexp_aux}'
         if self.node_exists(current_mexp_aux):
@@ -424,15 +465,20 @@ class MiniJavaParser:
 
         while self.peek()[1] == '*':
             self.expect("op", "*", current_mexp_aux)
-            self.parse_sexp(current_mexp_aux)
-            self.parse_mexp_aux(current_mexp_aux)
+            left = self.parse_sexp(current_mexp_aux)
+            result.append(left)
+            right = self.parse_mexp_aux(current_mexp_aux)
+            result.append(right)
             has_son = True
         
         self.epsilon(current_mexp_aux, has_son)
+    
+        return result
 
     # Regra: SEXP -> ! SEXP | - SEXP | true | false | num | null | new int '[' EXP ']' | PEXP . length | PEXP '[' EXP ']' | PEXP
     # Obs: Não foi alterada
     def parse_sexp(self, father):
+        result = []
         current_sexp = f'SEXP{self.id_sexp}'
         if self.node_exists(current_sexp):
             self.id_sexp += 1
@@ -445,8 +491,10 @@ class MiniJavaParser:
 
         if token[1] in ['!','-']:
             self.expect("op", token[1], current_sexp)
-            self.parse_sexp(current_sexp)
+            value = self.parse_sexp(current_sexp)
+            result.append(value)
         elif token[1] in ['true', 'false', 'null']:
+            result.append(token[1])
             self.expect("key", token[1], current_sexp)
         elif token[1] == "new":
             # Quando começa com new pode ser tanto para o SEXP quanto para o PEXP
@@ -459,27 +507,34 @@ class MiniJavaParser:
                 self.parse_exp(current_sexp)
                 self.expect("del", "]", current_sexp)
             elif self.peek()[0] == "id": # Ir para o PEXP
-                self.parse_pexp(current_sexp, is_new = True)
+                self.symbol_table.find_symbol(self.peek()[1])
+                value = self.parse_pexp(current_sexp, is_new = True)
+                result.append(value)
             else: # Erro no programa
                 raise ValueError(f"Token inesperado: {self.peek()}")
         elif token[0] == "num":
+            result.append(token[1])
             self.expect("num", token[1], current_sexp)
         else:
-            self.parse_pexp(current_sexp)
+            value = self.parse_pexp(current_sexp)
+            result.append(value)
             token = self.peek()
-            if token[1] == ".":
-                self.expect("del", token[1], current_sexp)
-                self.expect("key", "length", current_sexp)
+            if token[1] == ".length":
+                self.expect("key", token[1], current_sexp)
             elif token[1] == "[":
                 self.expect("del", token[1], current_sexp)
-                self.parse_exp(current_sexp)
+                value = self.parse_exp(current_sexp)
+                result.append(value)
                 self.expect("del", "]", current_sexp)
+        
+        return result
     
     # Regra original: PEXP -> id | this | new id '(' ')' | '(' EXP ')' | PEXP . id | PEXP . id '(' [EXPS] ')'
     # Regra atual: PEXP -> id PEXP_AUX | this PEXP_AUX | new id '(' ')' PEXP_AUX | '(' EXP ')' PEXP_AUX
     # Regra adicional: PEXP_AUX -> . id PEXP_AUX | . id '(' [EXPS] ')' PEXP_AUX | ε
     # Obs: O parâmetro is_new ajuda a diferenciar o SEXP do PEXP
     def parse_pexp(self, father, is_new = False):
+        result = []
         current_pexp = f'PEXP{self.id_pexp}'
         if self.node_exists(current_pexp):
             self.id_pexp += 1
@@ -494,20 +549,28 @@ class MiniJavaParser:
             self.expect("id", self.peek()[1], current_pexp)
             self.expect("del", "(", current_pexp)
             self.expect("del", ")", current_pexp)
-            self.parse_pexp_aux(current_pexp)
+            value = self.parse_pexp_aux(current_pexp)
+            result.append(value)
         elif token[0] == "id":
+            self.symbol_table.find_symbol(token[1])
             self.expect("id", token[1], current_pexp)
-            self.parse_pexp_aux(current_pexp)
+            value = self.parse_pexp_aux(current_pexp)
+            result.append(value)
         elif token[1] == "this":
             self.expect("key", token[1], current_pexp)
-            self.parse_pexp_aux(current_pexp)
+            value = self.parse_pexp_aux(current_pexp)
+            result.append(value)
         elif token[1] == "(":
             self.expect("del", "(", current_pexp)
-            self.parse_exp(current_pexp) 
+            left = self.parse_exp(current_pexp) 
+            result.append(left)
             self.expect("del", ")", current_pexp)
-            self.parse_pexp_aux(current_pexp)
+            right = self.parse_pexp_aux(current_pexp)
+            result.append(right)
         else:
             raise ValueError(f"Token inesperado: {self.peek()}")
+        
+        return result
 
     def parse_pexp_aux(self, father):
         has_son = False
@@ -521,6 +584,7 @@ class MiniJavaParser:
 
         if self.peek()[1] == ".":
             self.expect("del", ".", current_pexp_aux)
+            self.symbol_table.find_symbol(self.peek()[1])
             self.expect("id", self.peek()[1], current_pexp_aux)
             if self.peek()[1] == '(':
                 self.expect("del", "(", current_pexp_aux)
