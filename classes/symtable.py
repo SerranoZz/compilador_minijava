@@ -29,6 +29,25 @@ class SymbolTable:
                 return scope[name]
         raise ValueError(f"Símbolo '{name}' não encontrado.")
 
+    def find_symbol_class(self, name):
+        for scope_index, scope in enumerate(reversed(self.scopes)):  # Percorre os escopos de trás para frente
+            for symbol, details in scope.items():
+                symbol_type = details.get("type")
+                if symbol_type == "class":
+                    return scope[name]  # Retorna o primeiro símbolo do tipo "class"
+        
+        raise ValueError(f"Símbolo '{name}' não encontrado.")
+
+
+    def find_symbol_method(self, name):
+        scopes_to_check = self.scopes[-1:]
+
+        for scope in reversed(scopes_to_check): 
+            if name in scope:
+                return scope[name]
+
+        raise ValueError(f"Símbolo '{name}' não encontrado.")
+
     def print_table(self):
         """Imprime a tabela de símbolos."""
         if not self.scopes or all(not scope for scope in self.scopes):
