@@ -110,6 +110,7 @@ class MiniJavaParser:
     ### Funções das especificações da EBNF
     # MAIN
     def parse_main(self):
+        self.symbol_table.enter_scope()
         self.expect("key","class", "MAIN")
         self.expect("id", self.peek()[1], "MAIN")
         self.expect("del","{", "MAIN")

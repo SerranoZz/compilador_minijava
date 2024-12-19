@@ -63,8 +63,6 @@ class SymbolTable:
                     )
 
                 for index, (expected_type, provided_param) in enumerate(zip(expected_types, provided_parameters)):
-                    print(provided_param)
-
                     # Se o provided_param for uma lista, iterar sobre os valores
                     if isinstance(provided_param, list):
                         for param in provided_param:
