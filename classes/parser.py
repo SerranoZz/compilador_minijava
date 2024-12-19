@@ -41,7 +41,7 @@ class MiniJavaParser:
                     break  # Encontrou o segundo "class", não precisamos continuar
 
         return second_class_pos
-            
+
     def peek(self):
         """Retorna o token atual sem consumir."""
         if self.current < len(self.tokens):
@@ -69,6 +69,14 @@ class MiniJavaParser:
         self.tree.node(f'{self.current}', f'{value}')
         self.tree.edge(father, f'{self.current}')
     
+    def flatten_list(self, nested_list):
+        flat_list = []
+        for item in nested_list:
+            if isinstance(item, list):
+                flat_list.extend(self.flatten_list(item))  # Chama recursivamente para cada lista interna
+            else:
+                flat_list.append(item)
+        return flat_list
     
     def node_exists(self, node_id):
         return any(node_id in line for line in self.tree.body)
@@ -248,14 +256,14 @@ class MiniJavaParser:
 
         params_type = self.parse_type(current_params)
         params.append(f'{params_type}')
-        self.symbol_table.add_symbol(self.peek()[1], f'param {params_type}')
+        self.symbol_table.add_symbol(self.peek()[1], f'{params_type}', f'param')
         self.expect("id", self.peek()[1], current_params)
         
         while self.peek()[1] != ")":
             self.expect("del", ",", current_params)
             params_type = self.parse_type(current_params)
             params.append(f'{params_type}')
-            self.symbol_table.add_symbol(self.peek()[1], f'param {params_type}')
+            self.symbol_table.add_symbol(self.peek()[1], f'{params_type}', f'param')
             self.expect("id", self.peek()[1], current_params)
 
         return params
@@ -361,7 +369,9 @@ class MiniJavaParser:
         self.tree.edge(father, current_exp_aux)
         
         while self.peek()[1] == '&':
+            result.append(self.peek()[1])
             self.expect("op", "&", current_exp_aux)
+            result.append(self.peek()[1])
             self.expect("op", "&", current_exp_aux) 
             left = self.parse_rexp(current_exp_aux)
             if left is not None:
@@ -408,8 +418,10 @@ class MiniJavaParser:
         self.tree.edge(father, current_rexp_aux)
 
         while self.peek()[1] in ['<', '=', '!']:
+            result.append(self.peek()[1])
             self.expect("op", self.peek()[1], current_rexp_aux)
             if self.peek()[1] == "=":
+                result.append(self.peek()[1])
                 self.expect("op", "=", current_rexp_aux)
 
             left = self.parse_aexp(current_rexp_aux)
@@ -459,6 +471,7 @@ class MiniJavaParser:
         self.tree.edge(father, current_aexp_aux)
 
         while self.peek()[1] in ['+', '-']:
+            result.append(self.peek()[1])
             self.expect("op", self.peek()[1], current_aexp_aux)
             left = self.parse_mexp(current_aexp_aux)
             if left is not None:
@@ -505,6 +518,7 @@ class MiniJavaParser:
         self.tree.edge(father, current_mexp_aux)
 
         while self.peek()[1] == '*':
+            result.append(self.peek())
             self.expect("op", "*", current_mexp_aux)
             left = self.parse_sexp(current_mexp_aux)
             if left is not None:
@@ -533,6 +547,7 @@ class MiniJavaParser:
         token = self.peek()
 
         if token[1] in ['!','-']:
+            result.append(token[1])
             self.expect("op", token[1], current_sexp)
             value1 = self.parse_sexp(current_sexp)
             if value1 is not None:
@@ -609,6 +624,7 @@ class MiniJavaParser:
                     self.symbol_table.find_symbol_class(token[1])
                 except ValueError:
                     raise ValueError(f"Símbolo '{token[1]}' não encontrado.")
+            result.append(token[1])
             self.expect("id", token[1], current_pexp)
             value = self.parse_pexp_aux(current_pexp)
             if value is not None:
@@ -664,8 +680,10 @@ class MiniJavaParser:
             has_son = True
         self.epsilon(current_pexp_aux, has_son)
 
-        #print(result)
-        #print(arguments)
+        if len(arguments) > 0 and len(result) > 0:
+            #print(self.flatten_list(arguments))
+            self.symbol_table.check_parameter_match(self.flatten_list(result)[0], self.flatten_list(arguments))
+
         return result if result else None
     # Regra: EXPS -> EXP {, EXP}
     # Obs: Não foi alterada
