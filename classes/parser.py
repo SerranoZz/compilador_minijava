@@ -54,9 +54,6 @@ class MiniJavaParser:
             # Avalia a expressão usando o eval para números
             resultado = eval(''.join(expressao))
             return resultado
-        
-        # Caso contrário, retorna a expressão original
-        return expressao
 
     def peek(self):
         """Retorna o token atual sem consumir."""
@@ -338,8 +335,11 @@ class MiniJavaParser:
             self.expect("id", token[1], current_cmd)
             if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
-                valor = self.parse_exp(current_cmd)
-                print(self.evaluate_list(self.flatten_list(valor))) #Será utilizado na geração de código
+                value = self.parse_exp(current_cmd)
+                result = self.evaluate_list(self.flatten_list(value))
+                if result != None:
+                    #Será utilizado na geração de código
+                    print(result)
                 self.expect("del", ";", current_cmd)
             elif  self.peek()[0] == "del" and self.peek()[1] == "[":  
                 self.expect("del", "[", current_cmd)
