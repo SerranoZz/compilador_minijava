@@ -42,6 +42,22 @@ class MiniJavaParser:
 
         return second_class_pos
 
+    def evaluate_list(self, expressao):
+        # Define os operadores permitidos
+        operadores = {'+', '-', '*'}
+        
+        # Filtra os elementos que não são operadores
+        operandos = [item for item in expressao if item not in operadores]
+        
+        # Verifica se todos os operandos são números
+        if all(op.replace('.', '', 1).isdigit() for op in operandos):
+            # Avalia a expressão usando o eval para números
+            resultado = eval(''.join(expressao))
+            return resultado
+        
+        # Caso contrário, retorna a expressão original
+        return expressao
+
     def peek(self):
         """Retorna o token atual sem consumir."""
         if self.current < len(self.tokens):
@@ -322,7 +338,8 @@ class MiniJavaParser:
             self.expect("id", token[1], current_cmd)
             if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
-                self.parse_exp(current_cmd)
+                valor = self.parse_exp(current_cmd)
+                print(self.evaluate_list(self.flatten_list(valor))) #Será utilizado na geração de código
                 self.expect("del", ";", current_cmd)
             elif  self.peek()[0] == "del" and self.peek()[1] == "[":  
                 self.expect("del", "[", current_cmd)
@@ -519,7 +536,7 @@ class MiniJavaParser:
         self.tree.edge(father, current_mexp_aux)
 
         while self.peek()[1] == '*':
-            result.append(self.peek())
+            result.append(self.peek()[1])
             self.expect("op", "*", current_mexp_aux)
             left = self.parse_sexp(current_mexp_aux)
             if left is not None:
