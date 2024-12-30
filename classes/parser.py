@@ -42,7 +42,7 @@ class MiniJavaParser:
 
         return second_class_pos
 
-    def evaluate_list(self, expressao):
+    def evaluate_exp(self, expressao):
         # Define os operadores permitidos
         operadores = {'+', '-', '*'}
         
@@ -336,7 +336,7 @@ class MiniJavaParser:
             if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
                 value = self.parse_exp(current_cmd)
-                result = self.evaluate_list(self.flatten_list(value))
+                result = self.evaluate_exp(self.flatten_list(value))
                 if result != None:
                     #Será utilizado na geração de código
                     print(result)
