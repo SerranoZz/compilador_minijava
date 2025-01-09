@@ -1,7 +1,7 @@
 import sys
 from classes.scanner import MiniJavaScanner
 from classes.parser import MiniJavaParser
-
+from classes.ast import create_ast
 
 # Verificar se o nome do arquivo foi fornecido como argumento
 if len(sys.argv) < 2:
@@ -15,6 +15,9 @@ else:
         parser.parse_prog()
         parser.tree.render('./outputs/tree', format='png')
         print("Árvore gerada com sucesso. Arquivo criado em 'outputs/tree.png'")
+        ast = create_ast(parser.tree)
+        ast.render('./outputs/ast', format='png')
+        print("Árvore abstrata gerada com sucesso. Arquivo criado em 'outputs/ast.png'")
         parser.symbol_table.print_table()
     except Exception as e:
         print(f"Erro: {e}")
