@@ -410,8 +410,6 @@ def resolver_cmd(tree):
     Substitui um nó pelo primeiro filho cujo label esteja na lista 'especiais'.
 
     :param tree: Objeto Digraph da biblioteca Graphviz.
-    :param label: Label do nó a ser processado.
-    :param especiais: Lista de labels considerados especiais.
     :return: Novo objeto Digraph com as alterações aplicadas.
     """
     # Construir hierarquia e armazenar labels
@@ -574,7 +572,7 @@ def create_ast(tree):
     for node in up_nodes:
         new_tree = subir_primeiro_filho(new_tree, node)
 
-    for node in ["exps", "params"]:
+    for node in ["exps"]:
         new_tree = remover_intermediario(new_tree, node)
 
     new_tree = resolver_pexp(new_tree)
