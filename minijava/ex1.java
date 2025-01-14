@@ -14,16 +14,3 @@ class Fac1 {
         return num_aux1;
     }
 }
-
-class Fac2 {
-    int num_aux2;
-    public int ComputeFac(int num){
-        if (num < 1)
-            num_aux2 = 2 + 8;
-        else
-            num_aux2 = num * (this.ComputeFac(num-1));
-        return num_aux2 ;
-    }
-}
-
-
