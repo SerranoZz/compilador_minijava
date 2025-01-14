@@ -84,9 +84,13 @@ def assign(tree, id, label):
 def call_method(tree, id, label):
     n_params = 0
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
-    for child_id in hierarchy[id]:
+
+    # Carrega os parâmetros na ordem inversa
+    idx = len(hierarchy[id])-1
+    while idx >= 0:
         n_params += 1
-        code.append(f"param {r_value(tree, child_id, labels.get(child_id, child_id))}")
+        code.append(f"param {r_value(tree, hierarchy[id][idx], labels.get(hierarchy[id][idx], hierarchy[id][idx]))}")
+        idx -= 1
     return f"call {label}, {n_params}"
 
 def find_way(tree, id, label):
@@ -109,33 +113,23 @@ def instruction_while(tree, id):
     print("Está no while")
 
 def instruction_if(tree, id):
-    after = "end_if"
-    
-    
-    '''print("\n\nFilhos de if:")
-    for child_id in hierarchy[id]:
-        child_label = labels.get(child_id, child_id)
-        print(f"Nó: {child_id}, Label: {child_label}")
-    print("\nfim\n")'''
-    print("\n\nEstrutura do if\n\n")
+    n = new_else()
+    after = f"end_if_{n}"    
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
     if len(hierarchy[id]) == 4: # Tem else
         codition = hierarchy[id][3] # A condição aparece como último filho
-        print(f"Condição do if: {labels.get(codition, codition)}")
         if_block = hierarchy[id][0] # As intruções em casa de valor verdadeiro são o primeiro filho
-        print(f"Bloco do if: {labels.get(if_block, if_block)}")
         else_block = hierarchy[id][2] # O else é o segundo filho e suas instruções são o terceiro
-        print(f"Bloco do if: {labels.get(else_block, else_block)}")
-        after = f"else_{new_else()}"
+        after = f"else_{n}"
     
     code.append(f"ifFalse {r_value(tree, codition, labels.get(codition, codition))} goto {after}")
     find_way(tree, if_block, labels.get(if_block, if_block))
     code.append(f"goto end_{after}")
-    code.append(f"{after}")
+    code.append(f"{after}:")
 
     if len(hierarchy[id]) == 4:
         find_way(tree, else_block, labels.get(else_block, else_block))
-        code.append(f"end_{after}")
+        code.append(f"end_{after}:")
 
 
 def instruction_print(tree, id):
@@ -253,9 +247,5 @@ def iniciar_busca(tree, filename):
             filho_main(child_id, tree)
         else:
             filho_classe(child_label, child_id, tree)
-    
-    print("Código intermediário")
-    for line in code:
-        print(line)
 
     save_in_file()
