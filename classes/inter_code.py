@@ -58,7 +58,7 @@ def build_method(tree, id, parent_label, label):
         if iten[0] == f'{parent_label}.{label}':
             i= -1
             while ('.' not in iten[i]):
-                params_children.append(iten[i].split()[1])
+                params_children.append(iten[i])
                 i -=1 
             break
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
@@ -163,39 +163,17 @@ def extrair_hierarquia_e_labels(tree):
 
     return hierarchy, labels
 
-def extrair_hierarquia_labels_order(tree):
-    """
-    Extrai a hierarquia (arestas pai-filho), os labels e a ordem dos nós.
-
-    :param tree: Objeto Digraph da biblioteca Graphviz representando a árvore.
-    :return: Dois dicionários (hierarchy, labels) e uma lista (order).
-    """
-    hierarchy = defaultdict(list)
-    labels = {}
-    order = []  # Ordem dos nós conforme aparecem no arquivo fonte
-
-    # Extrair arestas (pai -> filho)
-    for match in edge_pattern.finditer(tree.source):
-        parent, child = match.groups()
-        hierarchy[parent].append(child)
-        if parent not in order:
-            order.append(parent)
-        if child not in order:
-            order.append(child)
-
-    # Extrair labels dos nós
-    for match in node_pattern.finditer(tree.source):
-        node, node_label = match.groups()
-        labels[node] = node_label
-
-    return hierarchy, labels, order
-
+def get_params(label):
+    for iten in params_list:
+        if label == iten[0]:
+            return ", ".join(iten[1:])
 
 def filho_classe(class_label, node, tree):
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
     for child_id in hierarchy[node]:
         child_label = labels.get(child_id, child_id)
-        code.append(f"\n{class_label}.{child_label}:")
+        f_params = get_params(f"{class_label}.{child_label}")
+        code.append(f"\n{class_label}.{child_label}({f_params}):")
         build_method(tree, child_id, class_label, child_label)
 
 
@@ -215,6 +193,32 @@ def filho_main(node, tree):
     for child_id in hierarchy[node]:
         child_label = labels.get(child_id, child_id)
         find_way(tree, child_id, child_label)
+
+def parse_file(filename):
+    # Regex para capturar classes e métodos com seus parâmetros
+    class_pattern = re.compile(r'class\s+(\w+)')
+    method_pattern = re.compile(r'public\s+\w+\s+(\w+)\(([^)]*)\)')
+
+    # Variável para armazenar a classe atual
+    current_class = None
+
+    # Abrir e ler o arquivo
+    with open(filename, 'r') as file:
+        for line in file:
+            line = line.strip()
+
+            # Verificar se a linha define uma classe
+            class_match = class_pattern.match(line)
+            if class_match:
+                current_class = class_match.group(1)
+
+            # Verificar se a linha define um método
+            method_match = method_pattern.match(line)
+            if method_match and current_class:
+                method_name = method_match.group(1)
+                parameters = method_match.group(2).strip()
+                parameter_list = [param.split()[-1] for param in parameters.split(',') if param]  # Extrair nomes dos parâmetros
+                params_list.append([f"{current_class}.{method_name}"] + parameter_list)
 
 def save_in_file():
     with open('./outputs/inter_code.txt', 'w') as f:
@@ -239,6 +243,8 @@ def iniciar_busca(tree, filename):
 
     if root is None:
         raise ValueError("A raiz da árvore não foi encontrada.")
+
+    parse_file(filename)
 
     # Percorrer os filhos de 'prog'
     for child_id in hierarchy.get(root, []):
