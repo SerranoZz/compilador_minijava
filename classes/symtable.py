@@ -2,6 +2,7 @@ class SymbolTable:
     def __init__(self):
         # Armazena os símbolos em diferentes escopos
         self.scopes = [{}]
+        self.errors = []
     
     def enter_scope(self):
         # Adiciona um novo escopo (e.g., ao entrar em uma classe ou método)
@@ -19,6 +20,7 @@ class SymbolTable:
 
         current_scope = self.scopes[-1]
         if name in current_scope:
+            self.errors.append(f"Símbolo '{name}' já declarado no escopo atual.")
             raise ValueError(f"Símbolo '{name}' já declarado no escopo atual.")
         current_scope[name] = {"type": symbol_type, "qt_info": qt_info, "info": additional_info}
     
@@ -27,6 +29,7 @@ class SymbolTable:
         for scope in reversed(self.scopes):
             if name in scope:
                 return scope[name]
+        self.errors.append(f"Símbolo '{name}' não encontrado.")
         raise ValueError(f"Símbolo '{name}' não encontrado.")
 
     def find_symbol_class(self, name):

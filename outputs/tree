@@ -6,7 +6,7 @@ digraph {
 	PROG -> CLASSE0
 	30 [label=class]
 	CLASSE0 -> 30
-	31 [label=Fac1]
+	31 [label=Fac]
 	CLASSE0 -> 31
 	32 [label="{"]
 	CLASSE0 -> 32
@@ -44,12 +44,22 @@ digraph {
 	METODO0 -> 42
 	43 [label="{"]
 	METODO0 -> 43
+	VAR1 [label=var]
+	METODO0 -> VAR1
+	TYPE3 [label=tipo]
+	VAR1 -> TYPE3
+	44 [label=int]
+	TYPE3 -> 44
+	45 [label=num_aux2]
+	VAR1 -> 45
+	46 [label=";"]
+	VAR1 -> 46
 	CMD0 [label=cmd]
 	METODO0 -> CMD0
-	44 [label=if]
-	CMD0 -> 44
-	45 [label="("]
-	CMD0 -> 45
+	47 [label=if]
+	CMD0 -> 47
+	48 [label="("]
+	CMD0 -> 48
 	EXP0 [label=exp]
 	CMD0 -> EXP0
 	REXP0 [label=rexp]
@@ -62,8 +72,8 @@ digraph {
 	MEXP0 -> SEXP0
 	PEXP0 [label=pexp]
 	SEXP0 -> PEXP0
-	46 [label=num]
-	PEXP0 -> 46
+	49 [label=num]
+	PEXP0 -> 49
 	PEXP_AUX0 [label=pexp_aux]
 	PEXP0 -> PEXP_AUX0
 	EPSILON0 [label="ε"]
@@ -78,16 +88,16 @@ digraph {
 	AEXP_AUX0 -> EPSILON2
 	REXP_AUX0 [label=rexp_aux]
 	REXP0 -> REXP_AUX0
-	47 [label="<"]
-	REXP_AUX0 -> 47
+	50 [label="<"]
+	REXP_AUX0 -> 50
 	AEXP1 [label=aexp]
 	REXP_AUX0 -> AEXP1
 	MEXP1 [label=mexp]
 	AEXP1 -> MEXP1
 	SEXP1 [label=sexp]
 	MEXP1 -> SEXP1
-	48 [label=1]
-	SEXP1 -> 48
+	51 [label=1]
+	SEXP1 -> 51
 	MEXP_AUX1 [label=mexp_aux]
 	MEXP1 -> MEXP_AUX1
 	EPSILON3 [label="ε"]
@@ -104,14 +114,14 @@ digraph {
 	EXP0 -> EXP_AUX1
 	EPSILON6 [label="ε"]
 	EXP_AUX1 -> EPSILON6
-	49 [label=")"]
-	CMD0 -> 49
+	52 [label=")"]
+	CMD0 -> 52
 	CMD1 [label=cmd]
 	CMD0 -> CMD1
-	50 [label=num_aux1]
-	CMD1 -> 50
-	51 [label="="]
-	CMD1 -> 51
+	53 [label=num_aux1]
+	CMD1 -> 53
+	54 [label="="]
+	CMD1 -> 54
 	EXP1 [label=exp]
 	CMD1 -> EXP1
 	REXP1 [label=rexp]
@@ -122,22 +132,22 @@ digraph {
 	AEXP2 -> MEXP2
 	SEXP2 [label=sexp]
 	MEXP2 -> SEXP2
-	52 [label=2]
-	SEXP2 -> 52
+	55 [label=2]
+	SEXP2 -> 55
 	MEXP_AUX2 [label=mexp_aux]
 	MEXP2 -> MEXP_AUX2
 	EPSILON7 [label="ε"]
 	MEXP_AUX2 -> EPSILON7
 	AEXP_AUX2 [label=aexp_aux]
 	AEXP2 -> AEXP_AUX2
-	53 [label="+"]
-	AEXP_AUX2 -> 53
+	56 [label="+"]
+	AEXP_AUX2 -> 56
 	MEXP3 [label=mexp]
 	AEXP_AUX2 -> MEXP3
 	SEXP3 [label=sexp]
 	MEXP3 -> SEXP3
-	54 [label=8]
-	SEXP3 -> 54
+	57 [label=8]
+	SEXP3 -> 57
 	MEXP_AUX3 [label=mexp_aux]
 	MEXP3 -> MEXP_AUX3
 	EPSILON8 [label="ε"]
@@ -154,16 +164,16 @@ digraph {
 	EXP1 -> EXP_AUX2
 	EPSILON11 [label="ε"]
 	EXP_AUX2 -> EPSILON11
-	55 [label=";"]
-	CMD1 -> 55
-	56 [label=else]
-	CMD0 -> 56
+	58 [label=";"]
+	CMD1 -> 58
+	59 [label=else]
+	CMD0 -> 59
 	CMD2 [label=cmd]
 	CMD0 -> CMD2
-	57 [label=num_aux1]
-	CMD2 -> 57
-	58 [label="="]
-	CMD2 -> 58
+	60 [label=num_aux1]
+	CMD2 -> 60
+	61 [label="="]
+	CMD2 -> 61
 	EXP2 [label=exp]
 	CMD2 -> EXP2
 	REXP2 [label=rexp]
@@ -176,22 +186,22 @@ digraph {
 	MEXP4 -> SEXP4
 	PEXP1 [label=pexp]
 	SEXP4 -> PEXP1
-	59 [label=num]
-	PEXP1 -> 59
+	62 [label=num]
+	PEXP1 -> 62
 	PEXP_AUX1 [label=pexp_aux]
 	PEXP1 -> PEXP_AUX1
 	EPSILON12 [label="ε"]
 	PEXP_AUX1 -> EPSILON12
 	MEXP_AUX4 [label=mexp_aux]
 	MEXP4 -> MEXP_AUX4
-	60 [label="*"]
-	MEXP_AUX4 -> 60
+	63 [label="*"]
+	MEXP_AUX4 -> 63
 	SEXP5 [label=sexp]
 	MEXP_AUX4 -> SEXP5
 	PEXP2 [label=pexp]
 	SEXP5 -> PEXP2
-	61 [label="("]
-	PEXP2 -> 61
+	64 [label="("]
+	PEXP2 -> 64
 	EXP3 [label=exp]
 	PEXP2 -> EXP3
 	REXP3 [label=rexp]
@@ -204,16 +214,16 @@ digraph {
 	MEXP5 -> SEXP6
 	PEXP3 [label=pexp]
 	SEXP6 -> PEXP3
-	62 [label=this]
-	PEXP3 -> 62
+	65 [label=this]
+	PEXP3 -> 65
 	PEXP_AUX2 [label=pexp_aux]
 	PEXP3 -> PEXP_AUX2
-	63 [label="."]
-	PEXP_AUX2 -> 63
-	64 [label=ComputeFac]
-	PEXP_AUX2 -> 64
-	65 [label="("]
-	PEXP_AUX2 -> 65
+	66 [label="."]
+	PEXP_AUX2 -> 66
+	67 [label=ComputeFac]
+	PEXP_AUX2 -> 67
+	68 [label="("]
+	PEXP_AUX2 -> 68
 	EXPS0 [label=exps]
 	PEXP_AUX2 -> EXPS0
 	EXP4 [label=exp]
@@ -228,8 +238,8 @@ digraph {
 	MEXP6 -> SEXP7
 	PEXP4 [label=pexp]
 	SEXP7 -> PEXP4
-	66 [label=num]
-	PEXP4 -> 66
+	69 [label=num]
+	PEXP4 -> 69
 	PEXP_AUX3 [label=pexp_aux]
 	PEXP4 -> PEXP_AUX3
 	EPSILON13 [label="ε"]
@@ -240,14 +250,14 @@ digraph {
 	MEXP_AUX5 -> EPSILON14
 	AEXP_AUX4 [label=aexp_aux]
 	AEXP5 -> AEXP_AUX4
-	67 [label="-"]
-	AEXP_AUX4 -> 67
+	70 [label="-"]
+	AEXP_AUX4 -> 70
 	MEXP7 [label=mexp]
 	AEXP_AUX4 -> MEXP7
 	SEXP8 [label=sexp]
 	MEXP7 -> SEXP8
-	68 [label=1]
-	SEXP8 -> 68
+	71 [label=1]
+	SEXP8 -> 71
 	MEXP_AUX6 [label=mexp_aux]
 	MEXP7 -> MEXP_AUX6
 	EPSILON15 [label="ε"]
@@ -264,8 +274,8 @@ digraph {
 	EXP4 -> EXP_AUX3
 	EPSILON18 [label="ε"]
 	EXP_AUX3 -> EPSILON18
-	69 [label=")"]
-	PEXP_AUX2 -> 69
+	72 [label=")"]
+	PEXP_AUX2 -> 72
 	PEXP_AUX4 [label=pexp_aux]
 	PEXP_AUX2 -> PEXP_AUX4
 	EPSILON19 [label="ε"]
@@ -286,8 +296,8 @@ digraph {
 	EXP3 -> EXP_AUX4
 	EPSILON23 [label="ε"]
 	EXP_AUX4 -> EPSILON23
-	70 [label=")"]
-	PEXP2 -> 70
+	73 [label=")"]
+	PEXP2 -> 73
 	PEXP_AUX5 [label=pexp_aux]
 	PEXP2 -> PEXP_AUX5
 	EPSILON24 [label="ε"]
@@ -308,10 +318,10 @@ digraph {
 	EXP2 -> EXP_AUX5
 	EPSILON28 [label="ε"]
 	EXP_AUX5 -> EPSILON28
-	71 [label=";"]
-	CMD2 -> 71
-	72 [label=return]
-	METODO0 -> 72
+	74 [label=";"]
+	CMD2 -> 74
+	75 [label=return]
+	METODO0 -> 75
 	EXP5 [label=exp]
 	METODO0 -> EXP5
 	REXP5 [label=rexp]
@@ -324,8 +334,8 @@ digraph {
 	MEXP8 -> SEXP9
 	PEXP5 [label=pexp]
 	SEXP9 -> PEXP5
-	73 [label=num_aux1]
-	PEXP5 -> 73
+	76 [label=num_aux1]
+	PEXP5 -> 76
 	PEXP_AUX6 [label=pexp_aux]
 	PEXP5 -> PEXP_AUX6
 	EPSILON29 [label="ε"]
@@ -346,12 +356,12 @@ digraph {
 	EXP5 -> EXP_AUX6
 	EPSILON33 [label="ε"]
 	EXP_AUX6 -> EPSILON33
-	74 [label=";"]
-	METODO0 -> 74
-	75 [label="}"]
-	METODO0 -> 75
-	76 [label="}"]
-	CLASSE0 -> 76
+	77 [label=";"]
+	METODO0 -> 77
+	78 [label="}"]
+	METODO0 -> 78
+	79 [label="}"]
+	CLASSE0 -> 79
 	1 [label=class]
 	MAIN -> 1
 	2 [label=Factorial]
@@ -400,7 +410,7 @@ digraph {
 	SEXP10 -> 17
 	PEXP6 [label=pexp]
 	SEXP10 -> PEXP6
-	18 [label=Fac1]
+	18 [label=Fac]
 	PEXP6 -> 18
 	19 [label="("]
 	PEXP6 -> 19
