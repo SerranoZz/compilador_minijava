@@ -9,7 +9,7 @@ digraph {
 	49 [label=num]
 	51 [label=1]
 	CMD1 [label="="]
-	53 [label=num_aux1]
+	53 [label=num_aux2]
 	AEXP2 [label=10]
 	59 [label=else]
 	CMD2 [label="="]
@@ -20,39 +20,42 @@ digraph {
 	AEXP5 [label="-"]
 	69 [label=num]
 	71 [label=1]
-	75 [label=return]
-	76 [label=num_aux1]
+	73 [label=7]
+	77 [label=return]
+	78 [label=num_aux1]
 	METODO1 [label=ComputeFac]
-	84 [label=num]
-	CMD3 [label=if]
-	REXP6 [label="<"]
-	89 [label=num]
-	91 [label=1]
+	86 [label=num]
+	CMD3 [label="="]
+	89 [label=num_aux1]
+	MEXP10 [label="*"]
+	91 [label=num]
+	PEXP8 [label="this.ComputeFac"]
+	98 [label=true]
+	102 [label=return]
+	103 [label=num_aux1]
+	CLASSE1 [label=Fac1]
+	METODO2 [label=ComputeFac]
+	118 [label=num]
 	CMD4 [label="="]
-	93 [label=num_aux1]
-	AEXP9 [label=10]
-	99 [label=else]
-	CMD5 [label="="]
-	100 [label=num_aux1]
-	MEXP13 [label="*"]
-	102 [label=num]
-	PEXP9 [label="this.ComputeFac"]
-	AEXP12 [label="-"]
-	109 [label=num]
-	111 [label=1]
-	115 [label=return]
-	116 [label=num_aux1]
-	CMD6 [label="System.out.println"]
-	PEXP12 [label="Fac.ComputeFac"]
-	24 [label=2]
+	121 [label=num_aux1]
+	MEXP14 [label="*"]
+	123 [label=num]
+	PEXP12 [label="this.ComputeFac"]
+	130 [label=true]
+	134 [label=return]
+	135 [label=num_aux1]
+	CMD5 [label="System.out.println"]
+	PEXP14 [label="Fac2.ComputeFac"]
+	24 [label=10]
 	PROG -> MAIN
 	PROG -> CLASSE0
+	PROG -> CLASSE1
 	CLASSE0 -> METODO0
 	CLASSE0 -> METODO1
 	METODO0 -> CMD0
-	METODO0 -> 75
+	METODO0 -> 77
 	METODO0 -> 41
-	METODO0 -> 76
+	METODO0 -> 78
 	CMD0 -> CMD1
 	CMD0 -> 59
 	CMD0 -> CMD2
@@ -66,28 +69,29 @@ digraph {
 	MEXP4 -> 62
 	MEXP4 -> PEXP3
 	PEXP3 -> AEXP5
+	PEXP3 -> 73
 	AEXP5 -> 69
 	AEXP5 -> 71
 	METODO1 -> CMD3
-	METODO1 -> 115
-	METODO1 -> 84
-	METODO1 -> 116
-	CMD3 -> CMD4
-	CMD3 -> 99
-	CMD3 -> CMD5
-	CMD3 -> REXP6
-	REXP6 -> 89
-	REXP6 -> 91
-	CMD4 -> 93
-	CMD4 -> AEXP9
-	CMD5 -> 100
-	CMD5 -> MEXP13
-	MEXP13 -> 102
-	MEXP13 -> PEXP9
-	PEXP9 -> AEXP12
-	AEXP12 -> 109
-	AEXP12 -> 111
-	MAIN -> CMD6
-	CMD6 -> PEXP12
-	PEXP12 -> 24
+	METODO1 -> 102
+	METODO1 -> 86
+	METODO1 -> 103
+	CMD3 -> 89
+	CMD3 -> MEXP10
+	MEXP10 -> 91
+	MEXP10 -> PEXP8
+	PEXP8 -> 98
+	CLASSE1 -> METODO2
+	METODO2 -> CMD4
+	METODO2 -> 134
+	METODO2 -> 118
+	METODO2 -> 135
+	CMD4 -> 121
+	CMD4 -> MEXP14
+	MEXP14 -> 123
+	MEXP14 -> PEXP12
+	PEXP12 -> 130
+	MAIN -> CMD5
+	CMD5 -> PEXP14
+	PEXP14 -> 24
 }
