@@ -123,6 +123,7 @@ def instruction_if(tree, id):
         after = f"else_{n}"
     
     code.append(f"ifFalse {r_value(tree, codition, labels.get(codition, codition))} goto {after}")
+    code.append(f"true_{after[-1]}:")
     find_way(tree, if_block, labels.get(if_block, if_block))
     code.append(f"goto end_{after}")
     code.append(f"{after}:")
@@ -220,9 +221,21 @@ def parse_file(filename):
                 parameter_list = [param.split()[-1] for param in parameters.split(',') if param]  # Extrair nomes dos parâmetros
                 params_list.append([f"{current_class}.{method_name}"] + parameter_list)
 
+def replace_by_name():
+    new_code = []
+    class_name = ""
+    for line in code:
+        if line.endswith(':') and '.' in line:
+            class_name = line.split('.')[0].strip()
+        elif 'this' in line:
+            line = line.replace('this', class_name)
+        new_code.append(line)
+    return new_code
+
 def save_in_file():
+    new_code = replace_by_name()
     with open('./outputs/inter_code.txt', 'w') as f:
-        for line in code:
+        for line in new_code:
             f.write(line+'\n')
 
 def iniciar_busca(tree, filename):
