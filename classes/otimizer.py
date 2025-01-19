@@ -1,4 +1,5 @@
 import math
+import re
 
 dict_methods = {}
 new_code = []
@@ -24,7 +25,6 @@ def get_params(block):
             params_list.append(line.split()[1].strip())
     params_list.reverse()
     dict_methods[class_name] = params_list
-    print(dict_methods)
 
 def expoente_2(n):
     try:
@@ -60,13 +60,15 @@ def propagacao_copia(block):
     one_value = []
     for i, line in enumerate(block):
         itens = line.split()
-        if len(itens) == 3:
+        if len(itens) == 3 and itens[1] == ':=':
             one_value.append([itens[0],itens[2]])
-            block.pop(i)
+            #block.pop(i)
     for i, line in enumerate(block):
-        for iten in one_value:
-            if iten[0] in line.split():
-                block[i] = block[i].replace(iten[0], iten[1])
+        for itens in one_value:
+            if itens[0] in line.split()[1:]:
+                new_line = line.split()[1:]
+                new_line[new_line.index(itens[0])] = itens[1]
+                block[i] = f"{line.split()[0]} {' '.join(new_line)}"
     return block
 
 
@@ -80,9 +82,11 @@ def atrib_simples(block):
             left[i] = f"new_{iten}"
             block[i] = block[i].replace(iten, f"new_{iten}")
             for j in range(i+1, len(block)):
-                block[j] = block[j].replace(iten, f"new_{iten}")
-                if block[j].split()[0] == f"new_{iten}": # Nova atribuição
-                    block[j] = block[j].replace(f"new_{iten}", iten, 1)
+                if f"{iten}" in block[j].split()[1:]:
+                    new_line = block[j].split()[1:]
+                    new_line[new_line.index(iten)] = f"new_{iten}"
+                    block[j] = f"{block[j].split()[0]} {' '.join(new_line)}"
+                if block[j].split()[0] == iten: # Nova atribuição
                     break
     return block
 
@@ -102,37 +106,48 @@ def desdobramento_constante(block):
             block[i] = block[i].replace(exp, str(eval(exp)))
     return block
 
-def remover_mortos(block):
+def remover_mortos(new_code, final_code):
     left = []
     right = []
-    for line in block:
-        if ':=' in line:
-            left.append(line.split()[0])
-            right.append(line.split()[1:])
-        else:
-            left.append("nada")
-            right.append(["nada"])
-    #for i in range(len(block)):
-    #    print(left[i], right[i], block[i])
-    for i, iten in enumerate(left):
-        count = 0
-        for r in right:
-            if iten in r:
-                count += 1
-                break
-        if count == 0:
-            print(i)
-            print(block)
-            block.pop(i)
-    return block
+    for i, line in enumerate(new_code):
+        if 'ifFalse' in line:
+            itens = line.split()
+            if itens[1] == 'False':
+                idx = final_code.index(line)
+                final_code[idx] = f"goto {itens[-1]}"
+                #for j in range(idx+1, len(final_code)):
+                #   if final_code[j] == f"{itens[-1]}:":
+                #        break
+                #    final_code.pop(j)
+            elif itens[1] == 'True':
+                idx = final_code.index(line)
+                final_code.pop(idx+1) # Remove o indicador do label de True
+                final_code.pop(idx) # Remove o IF
+        elif ':=' in line and re.match(r'^t\d+$', line.split()[0]): # Atribuição de temporário
+            t_var = line.split()[0]
+            count = 0
+            for final_line in final_code:
+                if t_var in final_line.split()[1:]:
+                    count += 1
+                    break
+            if count == 0:
+                final_code.pop(final_code.index(line))
+    return final_code
 
-def save_in_file():
+def save_in_file(code):
     with open('./outputs/otimized_inter_code.txt', 'w') as f:
-        for line in new_code:
+        for line in code:
             f.write(line+'\n')
+
+def global_otimizer():
+    final_code = []
+    for line in new_code:
+        final_code.append(line)
+    return remover_mortos(new_code, final_code)
 
 def local_otimizer(block):
     for _ in range(3):
+        #get_params(block)
         block = otimizacao_algebrica(block)
         block = atrib_simples(block)
         block = propagacao_copia(block)
@@ -156,6 +171,7 @@ def read_file(filename):
             local_otimizer(block)
             block = []
     local_otimizer(block)
+    return global_otimizer()
 
-read_file('./outputs/inter_code.txt')
-save_in_file()
+code = read_file('./outputs/inter_code.txt')
+save_in_file(code)
