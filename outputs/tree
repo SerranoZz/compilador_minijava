@@ -50,7 +50,7 @@ digraph {
 	VAR1 -> TYPE3
 	44 [label=int]
 	TYPE3 -> 44
-	45 [label=num_aux2]
+	45 [label=num_aux1]
 	VAR1 -> 45
 	46 [label=";"]
 	VAR1 -> 46
@@ -360,8 +360,338 @@ digraph {
 	METODO0 -> 77
 	78 [label="}"]
 	METODO0 -> 78
-	79 [label="}"]
-	CLASSE0 -> 79
+	METODO1 [label=metodo]
+	CLASSE0 -> METODO1
+	79 [label=public]
+	METODO1 -> 79
+	TYPE4 [label=tipo]
+	METODO1 -> TYPE4
+	80 [label=int]
+	TYPE4 -> 80
+	81 [label=ComputeFac]
+	METODO1 -> 81
+	82 [label="("]
+	METODO1 -> 82
+	PARAMS1 [label=params]
+	METODO1 -> PARAMS1
+	TYPE5 [label=tipo]
+	PARAMS1 -> TYPE5
+	83 [label=int]
+	TYPE5 -> 83
+	84 [label=num]
+	PARAMS1 -> 84
+	85 [label=")"]
+	METODO1 -> 85
+	86 [label="{"]
+	METODO1 -> 86
+	CMD3 [label=cmd]
+	METODO1 -> CMD3
+	87 [label=if]
+	CMD3 -> 87
+	88 [label="("]
+	CMD3 -> 88
+	EXP6 [label=exp]
+	CMD3 -> EXP6
+	REXP6 [label=rexp]
+	EXP6 -> REXP6
+	AEXP7 [label=aexp]
+	REXP6 -> AEXP7
+	MEXP9 [label=mexp]
+	AEXP7 -> MEXP9
+	SEXP10 [label=sexp]
+	MEXP9 -> SEXP10
+	PEXP6 [label=pexp]
+	SEXP10 -> PEXP6
+	89 [label=num]
+	PEXP6 -> 89
+	PEXP_AUX7 [label=pexp_aux]
+	PEXP6 -> PEXP_AUX7
+	EPSILON34 [label="ε"]
+	PEXP_AUX7 -> EPSILON34
+	MEXP_AUX10 [label=mexp_aux]
+	MEXP9 -> MEXP_AUX10
+	EPSILON35 [label="ε"]
+	MEXP_AUX10 -> EPSILON35
+	AEXP_AUX9 [label=aexp_aux]
+	AEXP7 -> AEXP_AUX9
+	EPSILON36 [label="ε"]
+	AEXP_AUX9 -> EPSILON36
+	REXP_AUX7 [label=rexp_aux]
+	REXP6 -> REXP_AUX7
+	90 [label="<"]
+	REXP_AUX7 -> 90
+	AEXP8 [label=aexp]
+	REXP_AUX7 -> AEXP8
+	MEXP10 [label=mexp]
+	AEXP8 -> MEXP10
+	SEXP11 [label=sexp]
+	MEXP10 -> SEXP11
+	91 [label=1]
+	SEXP11 -> 91
+	MEXP_AUX11 [label=mexp_aux]
+	MEXP10 -> MEXP_AUX11
+	EPSILON37 [label="ε"]
+	MEXP_AUX11 -> EPSILON37
+	AEXP_AUX10 [label=aexp_aux]
+	AEXP8 -> AEXP_AUX10
+	EPSILON38 [label="ε"]
+	AEXP_AUX10 -> EPSILON38
+	REXP_AUX8 [label=rexp_aux]
+	REXP_AUX7 -> REXP_AUX8
+	EPSILON39 [label="ε"]
+	REXP_AUX8 -> EPSILON39
+	EXP_AUX7 [label=exp_aux]
+	EXP6 -> EXP_AUX7
+	EPSILON40 [label="ε"]
+	EXP_AUX7 -> EPSILON40
+	92 [label=")"]
+	CMD3 -> 92
+	CMD4 [label=cmd]
+	CMD3 -> CMD4
+	93 [label=num_aux1]
+	CMD4 -> 93
+	94 [label="="]
+	CMD4 -> 94
+	EXP7 [label=exp]
+	CMD4 -> EXP7
+	REXP7 [label=rexp]
+	EXP7 -> REXP7
+	AEXP9 [label=aexp]
+	REXP7 -> AEXP9
+	MEXP11 [label=mexp]
+	AEXP9 -> MEXP11
+	SEXP12 [label=sexp]
+	MEXP11 -> SEXP12
+	95 [label=2]
+	SEXP12 -> 95
+	MEXP_AUX12 [label=mexp_aux]
+	MEXP11 -> MEXP_AUX12
+	EPSILON41 [label="ε"]
+	MEXP_AUX12 -> EPSILON41
+	AEXP_AUX11 [label=aexp_aux]
+	AEXP9 -> AEXP_AUX11
+	96 [label="+"]
+	AEXP_AUX11 -> 96
+	MEXP12 [label=mexp]
+	AEXP_AUX11 -> MEXP12
+	SEXP13 [label=sexp]
+	MEXP12 -> SEXP13
+	97 [label=8]
+	SEXP13 -> 97
+	MEXP_AUX13 [label=mexp_aux]
+	MEXP12 -> MEXP_AUX13
+	EPSILON42 [label="ε"]
+	MEXP_AUX13 -> EPSILON42
+	AEXP_AUX12 [label=aexp_aux]
+	AEXP_AUX11 -> AEXP_AUX12
+	EPSILON43 [label="ε"]
+	AEXP_AUX12 -> EPSILON43
+	REXP_AUX9 [label=rexp_aux]
+	REXP7 -> REXP_AUX9
+	EPSILON44 [label="ε"]
+	REXP_AUX9 -> EPSILON44
+	EXP_AUX8 [label=exp_aux]
+	EXP7 -> EXP_AUX8
+	EPSILON45 [label="ε"]
+	EXP_AUX8 -> EPSILON45
+	98 [label=";"]
+	CMD4 -> 98
+	99 [label=else]
+	CMD3 -> 99
+	CMD5 [label=cmd]
+	CMD3 -> CMD5
+	100 [label=num_aux1]
+	CMD5 -> 100
+	101 [label="="]
+	CMD5 -> 101
+	EXP8 [label=exp]
+	CMD5 -> EXP8
+	REXP8 [label=rexp]
+	EXP8 -> REXP8
+	AEXP10 [label=aexp]
+	REXP8 -> AEXP10
+	MEXP13 [label=mexp]
+	AEXP10 -> MEXP13
+	SEXP14 [label=sexp]
+	MEXP13 -> SEXP14
+	PEXP7 [label=pexp]
+	SEXP14 -> PEXP7
+	102 [label=num]
+	PEXP7 -> 102
+	PEXP_AUX8 [label=pexp_aux]
+	PEXP7 -> PEXP_AUX8
+	EPSILON46 [label="ε"]
+	PEXP_AUX8 -> EPSILON46
+	MEXP_AUX14 [label=mexp_aux]
+	MEXP13 -> MEXP_AUX14
+	103 [label="*"]
+	MEXP_AUX14 -> 103
+	SEXP15 [label=sexp]
+	MEXP_AUX14 -> SEXP15
+	PEXP8 [label=pexp]
+	SEXP15 -> PEXP8
+	104 [label="("]
+	PEXP8 -> 104
+	EXP9 [label=exp]
+	PEXP8 -> EXP9
+	REXP9 [label=rexp]
+	EXP9 -> REXP9
+	AEXP11 [label=aexp]
+	REXP9 -> AEXP11
+	MEXP14 [label=mexp]
+	AEXP11 -> MEXP14
+	SEXP16 [label=sexp]
+	MEXP14 -> SEXP16
+	PEXP9 [label=pexp]
+	SEXP16 -> PEXP9
+	105 [label=this]
+	PEXP9 -> 105
+	PEXP_AUX9 [label=pexp_aux]
+	PEXP9 -> PEXP_AUX9
+	106 [label="."]
+	PEXP_AUX9 -> 106
+	107 [label=ComputeFac]
+	PEXP_AUX9 -> 107
+	108 [label="("]
+	PEXP_AUX9 -> 108
+	EXPS1 [label=exps]
+	PEXP_AUX9 -> EXPS1
+	EXP10 [label=exp]
+	EXPS1 -> EXP10
+	REXP10 [label=rexp]
+	EXP10 -> REXP10
+	AEXP12 [label=aexp]
+	REXP10 -> AEXP12
+	MEXP15 [label=mexp]
+	AEXP12 -> MEXP15
+	SEXP17 [label=sexp]
+	MEXP15 -> SEXP17
+	PEXP10 [label=pexp]
+	SEXP17 -> PEXP10
+	109 [label=num]
+	PEXP10 -> 109
+	PEXP_AUX10 [label=pexp_aux]
+	PEXP10 -> PEXP_AUX10
+	EPSILON47 [label="ε"]
+	PEXP_AUX10 -> EPSILON47
+	MEXP_AUX15 [label=mexp_aux]
+	MEXP15 -> MEXP_AUX15
+	EPSILON48 [label="ε"]
+	MEXP_AUX15 -> EPSILON48
+	AEXP_AUX13 [label=aexp_aux]
+	AEXP12 -> AEXP_AUX13
+	110 [label="-"]
+	AEXP_AUX13 -> 110
+	MEXP16 [label=mexp]
+	AEXP_AUX13 -> MEXP16
+	SEXP18 [label=sexp]
+	MEXP16 -> SEXP18
+	111 [label=1]
+	SEXP18 -> 111
+	MEXP_AUX16 [label=mexp_aux]
+	MEXP16 -> MEXP_AUX16
+	EPSILON49 [label="ε"]
+	MEXP_AUX16 -> EPSILON49
+	AEXP_AUX14 [label=aexp_aux]
+	AEXP_AUX13 -> AEXP_AUX14
+	EPSILON50 [label="ε"]
+	AEXP_AUX14 -> EPSILON50
+	REXP_AUX10 [label=rexp_aux]
+	REXP10 -> REXP_AUX10
+	EPSILON51 [label="ε"]
+	REXP_AUX10 -> EPSILON51
+	EXP_AUX9 [label=exp_aux]
+	EXP10 -> EXP_AUX9
+	EPSILON52 [label="ε"]
+	EXP_AUX9 -> EPSILON52
+	112 [label=")"]
+	PEXP_AUX9 -> 112
+	PEXP_AUX11 [label=pexp_aux]
+	PEXP_AUX9 -> PEXP_AUX11
+	EPSILON53 [label="ε"]
+	PEXP_AUX11 -> EPSILON53
+	MEXP_AUX17 [label=mexp_aux]
+	MEXP14 -> MEXP_AUX17
+	EPSILON54 [label="ε"]
+	MEXP_AUX17 -> EPSILON54
+	AEXP_AUX15 [label=aexp_aux]
+	AEXP11 -> AEXP_AUX15
+	EPSILON55 [label="ε"]
+	AEXP_AUX15 -> EPSILON55
+	REXP_AUX11 [label=rexp_aux]
+	REXP9 -> REXP_AUX11
+	EPSILON56 [label="ε"]
+	REXP_AUX11 -> EPSILON56
+	EXP_AUX10 [label=exp_aux]
+	EXP9 -> EXP_AUX10
+	EPSILON57 [label="ε"]
+	EXP_AUX10 -> EPSILON57
+	113 [label=")"]
+	PEXP8 -> 113
+	PEXP_AUX12 [label=pexp_aux]
+	PEXP8 -> PEXP_AUX12
+	EPSILON58 [label="ε"]
+	PEXP_AUX12 -> EPSILON58
+	MEXP_AUX18 [label=mexp_aux]
+	MEXP_AUX14 -> MEXP_AUX18
+	EPSILON59 [label="ε"]
+	MEXP_AUX18 -> EPSILON59
+	AEXP_AUX16 [label=aexp_aux]
+	AEXP10 -> AEXP_AUX16
+	EPSILON60 [label="ε"]
+	AEXP_AUX16 -> EPSILON60
+	REXP_AUX12 [label=rexp_aux]
+	REXP8 -> REXP_AUX12
+	EPSILON61 [label="ε"]
+	REXP_AUX12 -> EPSILON61
+	EXP_AUX11 [label=exp_aux]
+	EXP8 -> EXP_AUX11
+	EPSILON62 [label="ε"]
+	EXP_AUX11 -> EPSILON62
+	114 [label=";"]
+	CMD5 -> 114
+	115 [label=return]
+	METODO1 -> 115
+	EXP11 [label=exp]
+	METODO1 -> EXP11
+	REXP11 [label=rexp]
+	EXP11 -> REXP11
+	AEXP13 [label=aexp]
+	REXP11 -> AEXP13
+	MEXP17 [label=mexp]
+	AEXP13 -> MEXP17
+	SEXP19 [label=sexp]
+	MEXP17 -> SEXP19
+	PEXP11 [label=pexp]
+	SEXP19 -> PEXP11
+	116 [label=num_aux1]
+	PEXP11 -> 116
+	PEXP_AUX13 [label=pexp_aux]
+	PEXP11 -> PEXP_AUX13
+	EPSILON63 [label="ε"]
+	PEXP_AUX13 -> EPSILON63
+	MEXP_AUX19 [label=mexp_aux]
+	MEXP17 -> MEXP_AUX19
+	EPSILON64 [label="ε"]
+	MEXP_AUX19 -> EPSILON64
+	AEXP_AUX17 [label=aexp_aux]
+	AEXP13 -> AEXP_AUX17
+	EPSILON65 [label="ε"]
+	AEXP_AUX17 -> EPSILON65
+	REXP_AUX13 [label=rexp_aux]
+	REXP11 -> REXP_AUX13
+	EPSILON66 [label="ε"]
+	REXP_AUX13 -> EPSILON66
+	EXP_AUX12 [label=exp_aux]
+	EXP11 -> EXP_AUX12
+	EPSILON67 [label="ε"]
+	EXP_AUX12 -> EPSILON67
+	117 [label=";"]
+	METODO1 -> 117
+	118 [label="}"]
+	METODO1 -> 118
+	119 [label="}"]
+	CLASSE0 -> 119
 	1 [label=class]
 	MAIN -> 1
 	2 [label=Factorial]
@@ -390,96 +720,96 @@ digraph {
 	MAIN -> 13
 	14 [label="{"]
 	MAIN -> 14
-	CMD3 [label=cmd]
-	MAIN -> CMD3
+	CMD6 [label=cmd]
+	MAIN -> CMD6
 	15 [label="System.out.println"]
-	CMD3 -> 15
+	CMD6 -> 15
 	16 [label="("]
-	CMD3 -> 16
-	EXP6 [label=exp]
-	CMD3 -> EXP6
-	REXP6 [label=rexp]
-	EXP6 -> REXP6
-	AEXP7 [label=aexp]
-	REXP6 -> AEXP7
-	MEXP9 [label=mexp]
-	AEXP7 -> MEXP9
-	SEXP10 [label=sexp]
-	MEXP9 -> SEXP10
+	CMD6 -> 16
+	EXP12 [label=exp]
+	CMD6 -> EXP12
+	REXP12 [label=rexp]
+	EXP12 -> REXP12
+	AEXP14 [label=aexp]
+	REXP12 -> AEXP14
+	MEXP18 [label=mexp]
+	AEXP14 -> MEXP18
+	SEXP20 [label=sexp]
+	MEXP18 -> SEXP20
 	17 [label=new]
-	SEXP10 -> 17
-	PEXP6 [label=pexp]
-	SEXP10 -> PEXP6
+	SEXP20 -> 17
+	PEXP12 [label=pexp]
+	SEXP20 -> PEXP12
 	18 [label=Fac]
-	PEXP6 -> 18
+	PEXP12 -> 18
 	19 [label="("]
-	PEXP6 -> 19
+	PEXP12 -> 19
 	20 [label=")"]
-	PEXP6 -> 20
-	PEXP_AUX7 [label=pexp_aux]
-	PEXP6 -> PEXP_AUX7
+	PEXP12 -> 20
+	PEXP_AUX14 [label=pexp_aux]
+	PEXP12 -> PEXP_AUX14
 	21 [label="."]
-	PEXP_AUX7 -> 21
+	PEXP_AUX14 -> 21
 	22 [label=ComputeFac]
-	PEXP_AUX7 -> 22
+	PEXP_AUX14 -> 22
 	23 [label="("]
-	PEXP_AUX7 -> 23
-	EXPS1 [label=exps]
-	PEXP_AUX7 -> EXPS1
-	EXP7 [label=exp]
-	EXPS1 -> EXP7
-	REXP7 [label=rexp]
-	EXP7 -> REXP7
-	AEXP8 [label=aexp]
-	REXP7 -> AEXP8
-	MEXP10 [label=mexp]
-	AEXP8 -> MEXP10
-	SEXP11 [label=sexp]
-	MEXP10 -> SEXP11
-	24 [label=10]
-	SEXP11 -> 24
-	MEXP_AUX10 [label=mexp_aux]
-	MEXP10 -> MEXP_AUX10
-	EPSILON34 [label="ε"]
-	MEXP_AUX10 -> EPSILON34
-	AEXP_AUX9 [label=aexp_aux]
-	AEXP8 -> AEXP_AUX9
-	EPSILON35 [label="ε"]
-	AEXP_AUX9 -> EPSILON35
-	REXP_AUX7 [label=rexp_aux]
-	REXP7 -> REXP_AUX7
-	EPSILON36 [label="ε"]
-	REXP_AUX7 -> EPSILON36
-	EXP_AUX7 [label=exp_aux]
-	EXP7 -> EXP_AUX7
-	EPSILON37 [label="ε"]
-	EXP_AUX7 -> EPSILON37
+	PEXP_AUX14 -> 23
+	EXPS2 [label=exps]
+	PEXP_AUX14 -> EXPS2
+	EXP13 [label=exp]
+	EXPS2 -> EXP13
+	REXP13 [label=rexp]
+	EXP13 -> REXP13
+	AEXP15 [label=aexp]
+	REXP13 -> AEXP15
+	MEXP19 [label=mexp]
+	AEXP15 -> MEXP19
+	SEXP21 [label=sexp]
+	MEXP19 -> SEXP21
+	24 [label=2]
+	SEXP21 -> 24
+	MEXP_AUX20 [label=mexp_aux]
+	MEXP19 -> MEXP_AUX20
+	EPSILON68 [label="ε"]
+	MEXP_AUX20 -> EPSILON68
+	AEXP_AUX18 [label=aexp_aux]
+	AEXP15 -> AEXP_AUX18
+	EPSILON69 [label="ε"]
+	AEXP_AUX18 -> EPSILON69
+	REXP_AUX14 [label=rexp_aux]
+	REXP13 -> REXP_AUX14
+	EPSILON70 [label="ε"]
+	REXP_AUX14 -> EPSILON70
+	EXP_AUX13 [label=exp_aux]
+	EXP13 -> EXP_AUX13
+	EPSILON71 [label="ε"]
+	EXP_AUX13 -> EPSILON71
 	25 [label=")"]
-	PEXP_AUX7 -> 25
-	PEXP_AUX8 [label=pexp_aux]
-	PEXP_AUX7 -> PEXP_AUX8
-	EPSILON38 [label="ε"]
-	PEXP_AUX8 -> EPSILON38
-	MEXP_AUX11 [label=mexp_aux]
-	MEXP9 -> MEXP_AUX11
-	EPSILON39 [label="ε"]
-	MEXP_AUX11 -> EPSILON39
-	AEXP_AUX10 [label=aexp_aux]
-	AEXP7 -> AEXP_AUX10
-	EPSILON40 [label="ε"]
-	AEXP_AUX10 -> EPSILON40
-	REXP_AUX8 [label=rexp_aux]
-	REXP6 -> REXP_AUX8
-	EPSILON41 [label="ε"]
-	REXP_AUX8 -> EPSILON41
-	EXP_AUX8 [label=exp_aux]
-	EXP6 -> EXP_AUX8
-	EPSILON42 [label="ε"]
-	EXP_AUX8 -> EPSILON42
+	PEXP_AUX14 -> 25
+	PEXP_AUX15 [label=pexp_aux]
+	PEXP_AUX14 -> PEXP_AUX15
+	EPSILON72 [label="ε"]
+	PEXP_AUX15 -> EPSILON72
+	MEXP_AUX21 [label=mexp_aux]
+	MEXP18 -> MEXP_AUX21
+	EPSILON73 [label="ε"]
+	MEXP_AUX21 -> EPSILON73
+	AEXP_AUX19 [label=aexp_aux]
+	AEXP14 -> AEXP_AUX19
+	EPSILON74 [label="ε"]
+	AEXP_AUX19 -> EPSILON74
+	REXP_AUX15 [label=rexp_aux]
+	REXP12 -> REXP_AUX15
+	EPSILON75 [label="ε"]
+	REXP_AUX15 -> EPSILON75
+	EXP_AUX14 [label=exp_aux]
+	EXP12 -> EXP_AUX14
+	EPSILON76 [label="ε"]
+	EXP_AUX14 -> EPSILON76
 	26 [label=")"]
-	CMD3 -> 26
+	CMD6 -> 26
 	27 [label=";"]
-	CMD3 -> 27
+	CMD6 -> 27
 	28 [label="}"]
 	MAIN -> 28
 }
