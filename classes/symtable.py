@@ -2,7 +2,7 @@ class SymbolTable:
     def __init__(self):
         # Armazena os símbolos em diferentes escopos
         self.scopes = [{}]
-    
+        self.errors =[]
     def enter_scope(self):
         # Adiciona um novo escopo (e.g., ao entrar em uma classe ou método)
         self.scopes.append({})
@@ -18,8 +18,12 @@ class SymbolTable:
             qt_info = len(additional_info)
 
         current_scope = self.scopes[-1]
+        if symbol_type.startswith("method"):
+            if name in self.scopes[-2]:
+                self.errors.append(f"Método '{name}' já declarado no escopo atual.")
         if name in current_scope:
-            raise ValueError(f"Símbolo '{name}' já declarado no escopo atual.")
+            self.errors.append(f"Símbolo '{name}' já declarado no escopo atual.")
+            # raise ValueError(f"Símbolo '{name}' já declarado no escopo atual.")
         current_scope[name] = {"type": symbol_type, "qt_info": qt_info, "info": additional_info}
     
     def find_symbol(self, name):
@@ -27,16 +31,20 @@ class SymbolTable:
         for scope in reversed(self.scopes):
             if name in scope:
                 return scope[name]
-        raise ValueError(f"Símbolo '{name}' não encontrado.")
+
+        return f"Símbolo '{name}' não encontrado."
+        # raise ValueError(f"Símbolo '{name}' não encontrado.")
 
     def find_symbol_class(self, name):
         for scope_index, scope in enumerate(reversed(self.scopes)):  # Percorre os escopos de trás para frente
             for symbol, details in scope.items():
                 symbol_type = details.get("type")
                 if symbol_type == "class":
-                    return scope[name]  # Retorna o primeiro símbolo do tipo "class"
+                    if name in scope:
+                        return scope[name]  # Retorna o primeiro símbolo do tipo "class"
         
-        raise ValueError(f"Símbolo '{name}' não encontrado.")
+        return f"Símbolo '{name}' não encontrado."
+        # raise ValueError(f"Símbolo '{name}' não encontrado.")
 
 
     def find_symbol_method(self, name):
@@ -46,7 +54,8 @@ class SymbolTable:
             if name in scope:
                 return scope[name]
 
-        raise ValueError(f"Símbolo '{name}' não encontrado.")
+        return f"Símbolo '{name}' não encontrado."
+        # raise ValueError(f"Símbolo '{name}' não encontrado.")
     
     def check_parameter_match(self, function_name, provided_parameters):
         for scope in self.scopes:
@@ -58,9 +67,10 @@ class SymbolTable:
                 provided_parameters = self.group_expressions(provided_parameters)
 
                 if len(provided_parameters) != function_details["qt_info"]:
-                    raise ValueError(
-                        f"Erro na função '{function_name}': esperado {function_details['qt_info']} parâmetros, mas {len(provided_parameters)} foram fornecidos."
-                    )
+                    return f"Erro na chamada da função '{function_name}': esperado {function_details['qt_info']} parâmetros, mas {len(provided_parameters)} foram fornecidos."
+                    # raise ValueError(
+                    #     f"Erro na função '{function_name}': esperado {function_details['qt_info']} parâmetros, mas {len(provided_parameters)} foram fornecidos."
+                    # )
 
                 for index, (expected_type, provided_param) in enumerate(zip(expected_types, provided_parameters)):
                     # Se o provided_param for uma lista, iterar sobre os valores
@@ -73,48 +83,51 @@ class SymbolTable:
                             elif param in ['+', '-', '*']:
                                 continue
                             elif self.find_symbol(param):
-                                try:
-                                    param_type = self.find_symbol_method(param)["type"]
-                                except ValueError:
-                                    try:
-                                        param_type = self.find_symbol_class(param)["type"]
-                                    except ValueError:
-                                        raise ValueError(f"Símbolo '{param}' não encontrado.")
+                                param_type = self.find_symbol_method(param)["type"]
+                                if isinstance(param_type, str) and param_type.startswith("Error"):
+                                    param_type = self.find_symbol_class(param)["type"]
+                                    if isinstance(param_type, str) and param_type.startswith("Error"):
+                                        return f"Símbolo '{function_name}' não encontrado."
+                                        # raise ValueError(f"Símbolo '{param}' não encontrado.")
                             else:
-                                raise TypeError(
-                                    f"Erro no parâmetro {index + 1} da função '{function_name}': valor '{param}' não é um tipo válido (esperado 'int' ou 'boolean')."
-                                )
+                                return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': valor '{param}' não é um tipo válido (esperado 'int' ou 'boolean')."
+                                # raise TypeError(
+                                #     f"Erro no parâmetro {index + 1} da função '{function_name}': valor '{param}' não é um tipo válido (esperado 'int' ou 'boolean')."
+                                # )
                             
                             if expected_type != param_type:
-                                raise TypeError(
-                                    f"Erro no parâmetro {index + 1} da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
-                                )
+                                return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
+                                # raise TypeError(
+                                #     f"Erro no parâmetro {index + 1} da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
+                                # )
                     else:
                         if provided_param.isdigit():
                             param_type = "int"
                         elif provided_param.lower() in ["true", "false"]:
                             param_type = "boolean"
                         elif self.find_symbol(provided_param):
-                            try:
-                                param_type = self.find_symbol_method(provided_param)["type"]
-                            except ValueError:
-                                try:
-                                    param_type = self.find_symbol_class(provided_param)["type"]
-                                except ValueError:
-                                    raise ValueError(f"Símbolo '{provided_param}' não encontrado.")
+                            param_type = self.find_symbol_method(provided_param)["type"]
+                            if isinstance(param_type, str) and param_type.startswith("Error"):
+                                param_type = self.find_symbol_class(provided_param)["type"]
+                                if isinstance(param_type, str) and param_type.startswith("Error"):
+                                        return f"Símbolo '{function_name}' não encontrado."
+                                        # raise ValueError(f"Símbolo '{provided_param}' não encontrado.")
                         else:
-                            raise TypeError(
-                                f"Erro no parâmetro {index + 1} da função '{function_name}': valor '{provided_param}' não é um tipo válido (esperado 'int' ou 'boolean')."
-                            )
+                            return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': valor '{provided_param}' não é um tipo válido (esperado 'int' ou 'boolean')."
+                            # raise TypeError(
+                            #     f"Erro no parâmetro {index + 1} da função '{function_name}': valor '{provided_param}' não é um tipo válido (esperado 'int' ou 'boolean')."
+                            # )
 
                         if expected_type != param_type:
-                            raise TypeError(
-                                f"Erro no parâmetro {index + 1} da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
-                            )
+                            return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
+                            # raise TypeError(
+                            #     f"Erro no parâmetro {index + 1} da função '{function_name}': esperado tipo '{expected_type}', mas '{param_type}' foi fornecido."
+                            # )
 
                 return True  
 
-        raise ValueError(f"Função '{function_name}' não encontrada na tabela de símbolos.")
+        return f"Função '{function_name}' não encontrada."
+        # raise ValueError(f"Função '{function_name}' não encontrada na tabela de símbolos.")
 
         
     def group_expressions(self, vector):

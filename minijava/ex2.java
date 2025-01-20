@@ -20,7 +20,6 @@ class Fac1 {
         return num_aux1;
     }
 
-    
-}
 
+}
 

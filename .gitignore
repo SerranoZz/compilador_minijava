@@ -1,4 +1,5 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-../minijava/ex1.java
+outputs/*
+classes/__pycache__/
