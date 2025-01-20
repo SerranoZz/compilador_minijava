@@ -31,7 +31,7 @@ def build_method():
     mips.append("move $fp $sp")
     sw("$ra", "$sp")
     lw("$a0", "$fp")
-    sw("$a0", "$sp")
+    #sw("$a0", "$sp")
 
 def get_param():
     t_var = f"$t{new_temp()}"
@@ -55,11 +55,15 @@ def if_false(condition, op1, op2, label):
         return f"bne {op1} {op2} {label}"
 
 def cgen(op):
+    print(f"{op}:", end="")
     if is_numeric(op):
         mips.append(f"li $a0 {op}")
-    elif op in actual_params:
-        i = actual_params.index(op) + 1
+        print("num")
+    elif op in actual_method:
+        print("param")
+        i = actual_method.index(op) + 1
         mips.append(f"lw $a0 {str(4*i)}($fp)")
+    print(actual_method)
 
 
 def operation(op):
@@ -142,6 +146,11 @@ def end_method():
     mips.append("lw $fp 0($sp)")
     mips.append("jr $ra")
 
+def save_in_file():
+    with open('./outputs/mips.txt', 'w') as f:
+        for line in mips:
+            f.write(line+'\n')
+
 def iniciar(filename):
     global actual_method
     global actual_params
@@ -155,11 +164,11 @@ def iniciar(filename):
         if line.endswith(":") and "." in line: # Representa um bloco
             actual_method = []
             label = line[:-1].split('(')[0]
-            actual_method.append(label)
             params = re.search(r'\((.*?)\)', line)
             params = params.group(1).split(',')
             for param in params:
                 actual_method.append(param.strip())
+            actual_method.reverse()
             mips.append(f"{label}:")
             build_method()
         elif "call" in line:
@@ -183,7 +192,6 @@ def iniciar(filename):
         elif "return" in line:
             end_method()
     
-    for inst in mips:
-        print(inst)
+    save_in_file()
 
 iniciar('./outputs/otimized_inter_code.txt')
