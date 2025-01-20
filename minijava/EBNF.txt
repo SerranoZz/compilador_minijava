@@ -1,0 +1,50 @@
+PROG -> MAIN {CLASSE}
+MAIN -> class id '{' public static void main '(' String '[' ']' id ')' '{' CMD '}' '}'
+CLASSE -> class id [extends id] '{' {VAR} {METODO} '}'
+VAR -> TIPO id ;
+METODO -> public TIPO id '(' [PARAMS] ')' '{' {VAR} {CMD} return EXP ; '}'
+PARAMS -> TIPO id {, TIPO id}
+TIPO -> int '[' ']'
+ | boolean
+ | int
+ | id
+CMD -> '{' {CMD} '}'
+ | if '(' EXP ')' CMD
+ | if '(' EXP ')' CMD else CMD
+ | while '(' EXP ')' CMD
+ | System.out.println '(' EXP ')' ;
+ | id = EXP ;
+ | id '[' EXP ']' = EXP ;
+EXP -> REXP EXP_AUX
+EXP_AUX -> && REXP EXP_AUX 
+ | ε
+REXP -> AEXP REXP_AUX
+REXP_AUX -> < AEXP REXP_AUX
+ | == AEXP REXP_AUX 
+ | != AEXP REXP_AUX 
+ | ε
+AEXP -> MEXP AEXP_AUX
+AEXP_AUX -> + MEXP AEXP_AUX 
+ | - MEXP AEXP_AUX 
+ | ε
+MEXP -> SEXP MEXP_AUX
+MEXP_AUX -> * SEXP MEXP_AUX 
+ | ε
+SEXP -> ! SEXP
+ | - SEXP
+ | true
+ | false
+ | num
+ | null
+ | new int '[' EXP ']'
+ | PEXP . length
+ | PEXP '[' EXP ']'
+ | PEXP
+PEXP -> id PEXP_AUX 
+ | this PEXP_AUX 
+ | new id '(' ')' PEXP_AUX 
+ | '(' EXP ')' PEXP_AUX
+PEXP_AUX -> . id PEXP_AUX 
+ | . id '(' [EXPS] ')' PEXP_AUX 
+ | ε
+EXPS -> EXP {, EXP}
