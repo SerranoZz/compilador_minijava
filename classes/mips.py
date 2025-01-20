@@ -55,15 +55,15 @@ def if_false(condition, op1, op2, label):
         return f"bne {op1} {op2} {label}"
 
 def cgen(op):
-    print(f"{op}:", end="")
+    #print(f"{op}:", end="")
     if is_numeric(op):
         mips.append(f"li $a0 {op}")
-        print("num")
+        #print("num")
     elif op in actual_method:
-        print("param")
+        #print("param")
         i = actual_method.index(op) + 1
         mips.append(f"lw $a0 {str(4*i)}($fp)")
-    print(actual_method)
+    #print(actual_method)
 
 
 def operation(op):
@@ -115,7 +115,7 @@ def is_numeric(n):
 def get_op(op):
     global actual_params
     if is_numeric(op):
-        print(f"op: {op}")
+        #print(f"op: {op}")
         mips.append(f"li $a0 {op}")
         return op
     if op in actual_params:
@@ -141,7 +141,7 @@ def call_method(idx, data):
 def end_method():
     mips.append("lw $ra 4($sp)")
     z = 8 + 4 * len(actual_params)
-    print(actual_params)
+    #print(actual_params)
     mips.append(f"addiu $sp $sp {z}")
     mips.append("lw $fp 0($sp)")
     mips.append("jr $ra")
@@ -173,7 +173,7 @@ def iniciar(filename):
             build_method()
         elif "call" in line:
             call_method(i, data)
-        elif "print" in line:
+        elif "#print" in line:
             syscall()
         elif "ifFalse" in line:
             condition = data[i-1].split('=')[1].strip()
@@ -194,4 +194,3 @@ def iniciar(filename):
     
     save_in_file()
 
-iniciar('./outputs/otimized_inter_code.txt')

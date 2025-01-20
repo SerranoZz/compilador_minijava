@@ -27,6 +27,7 @@ class MiniJavaParser:
         self.symbol_table = SymbolTable()
         self.tree = Digraph()
 
+
     def find_second_class_position(self):
         first_class_pos = None
         second_class_pos = None
@@ -77,7 +78,7 @@ class MiniJavaParser:
         """Garante que o token atual é o esperado; caso contrário, gera um erro."""
         token = self.match(category, value)
         if not token:
-            raise SyntaxError(f"Expected {category} '{value}', got {self.peek()}")
+            raise SyntaxError(f"Token Esperado: {category} '{value}', Token Lido: {self.peek()}")
 
         self.tree.node(f'{self.current}', f'{value}')
         self.tree.edge(father, f'{self.current}')
@@ -156,19 +157,20 @@ class MiniJavaParser:
         self.tree.edge(father, current_class)
 
         self.expect("key","class", current_class)
-        try:
-            self.symbol_table.find_symbol(self.peek()[1])
-        except ValueError:
-            pass
-        else:
-            if self.id_class != 0:
-                raise ValueError(f"Classe '{self.peek()[1]}' já foi declarada.")
-        self.symbol_table.add_symbol(self.peek()[1], "class")
+        test = self.symbol_table.find_symbol(self.peek()[1])
+        if not isinstance(test, str):
+            if test not in self.symbol_table.errors:
+                self.symbol_table.errors.append(f"Classe '{self.peek()[1]}' já foi declarada.")
+
+        error = self.symbol_table.add_symbol(self.peek()[1], "class")
         self.expect("id", self.peek()[1], current_class)
 
         if self.peek()[1] == "extends":
             self.expect("key", "extends", current_class)
-            self.symbol_table.find_symbol(self.peek()[1])
+            test = self.symbol_table.find_symbol(self.peek()[1])
+            if isinstance(test, str):
+                if test not in self.symbol_table.errors:
+                    self.symbol_table.errors.append(test)
             self.expect("id", self.peek()[1], current_class)
 
         self.expect("del","{", current_class)
@@ -325,13 +327,13 @@ class MiniJavaParser:
 
 
         elif token[0] == "id":  # Atribuição ou chamada de método
-            try:
-                self.symbol_table.find_symbol_method(token[1])
-            except ValueError:
-                try:
-                    self.symbol_table.find_symbol_class(token[1])
-                except ValueError:
-                    raise ValueError(f"Símbolo '{token[1]}' não encontrado.")
+            test = self.symbol_table.find_symbol_method(token[1])
+            if isinstance(test, str):
+                test = self.symbol_table.find_symbol_class(token[1])
+                if isinstance(test, str):
+                    if test not in self.symbol_table.errors:
+                        self.symbol_table.errors.append(f"Símbolo '{token[1]}' não encontrado.")
+
             self.expect("id", token[1], current_cmd)
             if self.peek()[0] == "op" and self.peek()[1] == "=":  
                 self.expect("op", "=", current_cmd)
@@ -339,7 +341,9 @@ class MiniJavaParser:
                 result = self.evaluate_exp(self.flatten_list(value))
                 if result != None:
                     #Será utilizado na geração de código
-                    print(result)
+                    #print(result)
+                    pass
+                    
                 self.expect("del", ";", current_cmd)
             elif  self.peek()[0] == "del" and self.peek()[1] == "[":  
                 self.expect("del", "[", current_cmd)
@@ -584,7 +588,10 @@ class MiniJavaParser:
                 value2 = self.parse_exp(current_sexp)
                 self.expect("del", "]", current_sexp)
             elif self.peek()[0] == "id": # Ir para o PEXP
-                self.symbol_table.find_symbol(self.peek()[1])
+                test = self.symbol_table.find_symbol(self.peek()[1])
+                if isinstance(test, str):
+                    if test not in self.symbol_table.errors:
+                        self.symbol_table.errors.append(test)
                 result.append(self.peek()[1])
                 value3 = self.parse_pexp(current_sexp, is_new = True)
                 if value3 is not None:
@@ -627,7 +634,10 @@ class MiniJavaParser:
         token = self.peek()
 
         if is_new: # O new já foi consumido pelo SEXP
-            self.symbol_table.find_symbol(self.peek()[1])
+            test = self.symbol_table.find_symbol(self.peek()[1])
+            if isinstance(test, str):
+                if test not in self.symbol_table.errors:
+                    self.symbol_table.errors.append(test)
             self.expect("id", self.peek()[1], current_pexp)
             self.expect("del", "(", current_pexp)
             self.expect("del", ")", current_pexp)
@@ -635,13 +645,13 @@ class MiniJavaParser:
             if value is not None:
                 result.append(value)
         elif token[0] == "id":
-            try:
-                self.symbol_table.find_symbol_method(token[1])
-            except ValueError:
-                try:
-                    self.symbol_table.find_symbol_class(token[1])
-                except ValueError:
-                    raise ValueError(f"Símbolo '{token[1]}' não encontrado.")
+            test = self.symbol_table.find_symbol_method(token[1])
+            if isinstance(test, str):
+                test = self.symbol_table.find_symbol_class(token[1])
+                if isinstance(test, str):
+                    if test not in self.symbol_table.errors:
+                        self.symbol_table.errors.append(f"Símbolo '{token[1]}' não encontrado.")
+
             result.append(token[1])
             self.expect("id", token[1], current_pexp)
             value = self.parse_pexp_aux(current_pexp)
@@ -700,7 +710,11 @@ class MiniJavaParser:
 
         if len(arguments) > 0 and len(result) > 0:
             #print(self.flatten_list(arguments))
-            self.symbol_table.check_parameter_match(self.flatten_list(result)[0], self.flatten_list(arguments))
+            test = self.symbol_table.check_parameter_match(self.flatten_list(result)[0], self.flatten_list(arguments))
+            if isinstance(test, str):
+                if test not in self.symbol_table.errors:
+                    if test not in self.symbol_table.errors:
+                        self.symbol_table.errors.append(test)
 
         return result if result else None
     # Regra: EXPS -> EXP {, EXP}

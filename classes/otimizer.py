@@ -173,5 +173,3 @@ def read_file(filename):
     local_otimizer(block)
     return global_otimizer()
 
-code = read_file('./outputs/inter_code.txt')
-save_in_file(code)

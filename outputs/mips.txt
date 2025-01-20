@@ -1,0 +1,45 @@
+sw $fp (0)$sp
+addiu $sp $sp -4
+li $a0 10
+sw $a0 (0)$sp
+addiu $sp $sp -4
+jal Fac1.ComputeFac
+Fac1.ComputeFac:
+move $fp $sp
+sw $ra (0)$sp
+addiu $sp $sp -4
+lw $a0 (4)$fp
+lw $a0 4($fp)
+sw $a0 0($sp)
+addiu $sp $sp -4
+li $a0 1
+lw $t1 4($sp)
+addiu $sp $sp 4
+bge $a0 $t1 else_1
+true_1:
+li $a0 10
+b end_else_1
+else_1:
+lw $a0 4($fp)
+sw $a0 0($sp)
+addiu $sp $sp -4
+li $a0 1
+lw $t2 4($sp)
+addiu $sp $sp 4
+sub $a0 $t2 $a0
+sw $fp (0)$sp
+addiu $sp $sp -4
+sw $a0 (0)$sp
+addiu $sp $sp -4
+jal Fac1.ComputeFac
+lw $a0 4($fp)
+sw $a0 0($sp)
+addiu $sp $sp -4
+lw $t3 4($sp)
+addiu $sp $sp 4
+mul $a0 $t3 $a0
+end_else_1:
+lw $ra 4($sp)
+addiu $sp $sp 12
+lw $fp 0($sp)
+jr $ra
