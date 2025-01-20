@@ -147,28 +147,43 @@ def instruction_if(tree, id):
     after = f"end_if_{n}"    
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
 
-    # Verifica se o if possui else
-    if labels.get(hierarchy[id][0],hierarchy[id][0]) == "else":
-        # Localiza a condição do if
-        idx = 0
-        for i, child_id in enumerate(hierarchy[id]):
-            if labels.get(child_id,child_id) in ['<', '>', '<=', '>=', '==', '!=']:
-                condition = hierarchy[id][i]
-                idx = i
-                break
 
-        else_block = hierarchy[id][1:idx]
-        idx += 1
-        #condition = hierarchy[id][2]
-        if_block = hierarchy[id][idx:]
-        after = f"else_{n}"
+    if_block = []
+    else_block = []
+    condition = None
+    instructions = []
+    tem_else = False
+
+    for child_id in hierarchy[id]:
+        if 'REXP' in child_id:
+            condition = child_id
+        elif 'CMD' in child_id:
+            instructions.append(child_id)
+        else:
+            tem_else = True
+
+    instructions.sort()
+    mark = int(instructions[0][-1])
+    while f"CMD{mark}" in instructions:
+        if_block.append(f"CMD{mark}")
+        mark += 1
     
-        code.append(f"ifFalse {r_value(tree, condition, labels.get(condition, condition))} goto {after}")
-        code.append(f"true_{after[-1]}:")
-        for child_id in if_block:
-            find_way(tree, child_id, labels.get(child_id, child_id))
-        code.append(f"goto end_{after}")
-        code.append(f"{after}:")
+    # Verifica se o if possui else
+    if tem_else:
+        after = f"else_{n}"
+        mark += 1
+        while f"CMD{mark}" in instructions:
+            else_block.append(f"CMD{mark}")
+            mark += 1
+
+    code.append(f"ifFalse {r_value(tree, condition, labels.get(condition, condition))} goto {after}")
+    code.append(f"true_{after[-1]}:")
+    for child_id in if_block:
+        find_way(tree, child_id, labels.get(child_id, child_id))
+    code.append(f"goto end_{after}")
+    code.append(f"{after}:")
+
+    if tem_else:
         for child_id in else_block:
             find_way(tree, child_id, labels.get(child_id, child_id))
         code.append(f"end_{after}:")

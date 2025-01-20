@@ -107,8 +107,6 @@ def desdobramento_constante(block):
     return block
 
 def remover_mortos(new_code, final_code):
-    left = []
-    right = []
     for i, line in enumerate(new_code):
         if 'ifFalse' in line:
             itens = line.split()
@@ -145,13 +143,22 @@ def global_otimizer():
         final_code.append(line)
     return remover_mortos(new_code, final_code)
 
+def print_block(msg, block):
+    print(msg)
+    for line in block:
+        print(line)
+
 def local_otimizer(block):
     for _ in range(3):
         #get_params(block)
         block = otimizacao_algebrica(block)
+        #print_block("Otimização Algébrica:", block)
         block = atrib_simples(block)
+        #print_block("Atribuição simples:", block)
         block = propagacao_copia(block)
+        #print_block("Propagação de Cópia:", block)
         block = desdobramento_constante(block)
+        #print_block("Desdobramento de constate:", block)
         #block = remover_mortos(block)
     for line in block:
         new_code.append(line)
