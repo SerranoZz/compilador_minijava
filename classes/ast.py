@@ -271,7 +271,8 @@ def resolver_operadores(tree, label):
     """
 
     # Operadores definidos
-    operators = {"+", "-", "*", ">", "<", "<=", ">=", "==", "!=", "&&", "!"}
+    operators = {"+", "-", "*", ">", "<", "=", "!", "&", "<=", ">=", "==", "!=", "&&"}
+    operators_aux = {"=", "&"}
     
     # Construir hierarquia e armazenar labels
     hierarchy = defaultdict(list)
@@ -288,17 +289,35 @@ def resolver_operadores(tree, label):
     # Substituir e ajustar nós
     for parent, children in list(hierarchy.items()):
         if labels.get(parent) == label:
-            for child in children:
+            for i, child in enumerate(children):
                 if labels.get(child) in operators:
+                    if labels.get(children[i+1]) in operators_aux:
+                        next_child = children[i+1]
+                        labels[parent] = f"{labels[child]}{labels[next_child]}"
+
+                        grandchildren = hierarchy.pop(next_child, [])
+                        hierarchy[parent].extend(grandchildren)
+
+                        grandchildren = hierarchy.pop(child, [])
+                        hierarchy[parent].extend(grandchildren)
+                        
+                        hierarchy[parent].remove(next_child)
+                        del labels[next_child]
+                        
+                        hierarchy[parent].remove(child)
+                        del labels[child]
+                        
+                        break
+                    else:
                     # Atualizar o label do nó pai
-                    labels[parent] = labels[child]
+                        labels[parent] = labels[child]
                     # Conectar os filhos do operador diretamente ao pai
-                    grandchildren = hierarchy.pop(child, [])
-                    hierarchy[parent].extend(grandchildren)
+                        grandchildren = hierarchy.pop(child, [])
+                        hierarchy[parent].extend(grandchildren)
                     # Remover o nó filho usado na substituição
-                    hierarchy[parent].remove(child)
-                    del labels[child]
-                    break
+                        hierarchy[parent].remove(child)
+                        del labels[child]
+                        break
 
     # Reconstruir o novo grafo
     new_tree = Digraph()
@@ -447,6 +466,23 @@ def resolver_cmd(tree):
                     # Remover o filho especial
                     hierarchy[node].remove(special_child)
                     del labels[special_child]
+                else:
+                    # Caso nenhum filho especial seja encontrado, promover todos os filhos
+                    parent = None
+                    for potential_parent, children in hierarchy.items():
+                        if node in children:
+                            parent = potential_parent
+                            break
+
+                    if parent:
+                        # Remover o nó atual da hierarquia do pai
+                        hierarchy[parent].remove(node)
+                        # Adicionar todos os filhos ao nível superior
+                        hierarchy[parent].extend(hierarchy[node])
+
+                    # Remover o nó "cmd" e sua hierarquia
+                    del hierarchy[node]
+                    del labels[node]
 
     # Reconstruir o novo grafo
     new_tree = Digraph()

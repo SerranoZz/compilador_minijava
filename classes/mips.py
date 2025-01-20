@@ -3,6 +3,7 @@ import re
 mips = []
 actual_method = []
 actual_params = []
+stack_method = []
 t_count = 0
 temps = {}
 
@@ -12,11 +13,11 @@ def new_temp():
     return t_count
 
 def sw(op1, op2):
-    mips.append(f"sw {op1} (0){op2}")
+    mips.append(f"sw {op1} 0({op2})")
     mips.append(f"addiu {op2} {op2} -4")
 
-def lw(op1, op2):
-    mips.append(f"lw {op1} (4){op2}")
+#def lw(op1, op2):
+#    mips.append(f"lw {op1} (4){op2}")
 
 def li(op1, op2):
     mips.append(f"li {op1} {op2}")
@@ -30,7 +31,7 @@ def syscall():
 def build_method():
     mips.append("move $fp $sp")
     sw("$ra", "$sp")
-    lw("$a0", "$fp")
+    #lw("$a0", "$fp")
     #sw("$a0", "$sp")
 
 def get_param():
@@ -55,16 +56,16 @@ def if_false(condition, op1, op2, label):
         return f"bne {op1} {op2} {label}"
 
 def cgen(op):
-    print(f"{op}:", end="")
+    global stack_method
+    params = []
+    if len(stack_method) > 0:
+        params = stack_method[-1]
+
     if is_numeric(op):
         mips.append(f"li $a0 {op}")
-        print("num")
-    elif op in actual_method:
-        print("param")
-        i = actual_method.index(op) + 1
+    elif op in params:
+        i = params.index(op) + 1
         mips.append(f"lw $a0 {str(4*i)}($fp)")
-    print(actual_method)
-
 
 def operation(op):
     global t_count
@@ -93,6 +94,11 @@ def assign(line):
         mips.append(f"lw {t_var} 4($sp)")
         mips.append("addiu $sp $sp 4")
         operation(operator)
+    elif '<<' in line:
+        op1 = line.strip().split()[-3]
+        op2 = line.strip().split()[-1]
+        cgen(op1)
+        mips.append(f"ssl $a0 $a0 {op2}")
     elif '>' in line or '<' in line:
         op1 = line.strip().split()[-3]
         operator = line.strip().split()[-2]
@@ -112,16 +118,6 @@ def is_numeric(n):
         return False
     return True
 
-def get_op(op):
-    global actual_params
-    if is_numeric(op):
-        print(f"op: {op}")
-        mips.append(f"li $a0 {op}")
-        return op
-    if op in actual_params:
-        return get_param()
-    return "$a0"
-
 def call_method(idx, data):
     global actual_params
     actual_params = []
@@ -139,9 +135,10 @@ def call_method(idx, data):
     mips.append(f"jal {label}")
 
 def end_method():
+    global stack_method
+    params = stack_method.pop()
     mips.append("lw $ra 4($sp)")
-    z = 8 + 4 * len(actual_params)
-    print(actual_params)
+    z = 8 + 4 * len(params)
     mips.append(f"addiu $sp $sp {z}")
     mips.append("lw $fp 0($sp)")
     mips.append("jr $ra")
@@ -154,6 +151,7 @@ def save_in_file():
 def iniciar(filename):
     global actual_method
     global actual_params
+    global stack_method
     f = open(filename, 'r')
     data = f.readlines()
     f.close()
@@ -168,7 +166,8 @@ def iniciar(filename):
             params = params.group(1).split(',')
             for param in params:
                 actual_method.append(param.strip())
-            actual_method.reverse()
+            stack_method.append(actual_method)
+            #actual_method.reverse()
             mips.append(f"{label}:")
             build_method()
         elif "call" in line:
@@ -194,4 +193,4 @@ def iniciar(filename):
     
     save_in_file()
 
-iniciar('./outputs/otimized_inter_code.txt')
+#iniciar('./outputs/otimized_inter_code.txt')
