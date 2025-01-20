@@ -6,20 +6,15 @@ class Factorial{
 
 class Fac1 {
     int num_aux1;
-    int result;
-    public int Sub(int a, int b){
-        return a - b;
-    }
-    
+    int num_aux2;
     public int ComputeFac(int num){
-        result = this.Sub(2, 1);
-        if (num < 1)
+        num_aux1 = 5;
+        num_aux2 = 3 * num_aux1;
+        num_aux1 = num * 2;
+        if (num_aux2 < 10)
             num_aux1 = 2 + 8;
         else
-            num_aux1 = num * (this.ComputeFac(num-1));
+            num_aux1 = 5;
         return num_aux1;
     }
-
-
 }
-
