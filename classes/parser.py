@@ -439,7 +439,7 @@ class MiniJavaParser:
         self.tree.node(current_rexp_aux, 'rexp_aux')
         self.tree.edge(father, current_rexp_aux)
 
-        while self.peek()[1] in ['<', '=', '!']:
+        while self.peek()[1] in ['<', '>', '=', '!']:
             result.append(self.peek()[1])
             self.expect("op", self.peek()[1], current_rexp_aux)
             if self.peek()[1] == "=":
