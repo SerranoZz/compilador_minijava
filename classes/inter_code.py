@@ -18,6 +18,8 @@ params_list = []
 temp = 0
 # Controle de else
 c_else = 0
+# Controle de while
+c_while = 0
 
 def new_temp():
     global temp
@@ -28,6 +30,11 @@ def new_else():
     global c_else
     c_else += 1
     return c_else
+
+def new_while():
+    global c_while
+    c_while += 1
+    return c_while
 
 # Considerando que não há vetores na linguagem
 def l_value(label):
@@ -110,26 +117,60 @@ def params(label):
     code.append(f"t{t} := {label}")
       
 def instruction_while(tree, id):
-    print("Está no while")
+    """
+    Primeiro filho: condição
+    Demais filhos: instruções do loop (na ordem correta)
+    """
+    n = new_while()
+    after = f"end_while_{n}" 
+    hierarchy, labels = extrair_hierarquia_e_labels(tree)
+    codition = hierarchy[id][0]
+    while_block = hierarchy[id][1:]
+    
+    code.append(f"while_{n}:")
+    code.append(f"ifFalse {r_value(tree, codition, labels.get(codition, codition))} goto {after}")
+
+    for child_id in while_block:
+        find_way(tree, child_id, labels.get(child_id, child_id))
+    
+    code.append(f"b while_{n}")
+    code.append(f"{after}:")
+
 
 def instruction_if(tree, id):
+    """
+    Primeiro filho: else (se houver)
+    Segundo filho: instruções do else (se houver)
+    Terceiro filho: condição do if
+    Demais filhos: instruções do if (na ordem correta)"""
     n = new_else()
     after = f"end_if_{n}"    
     hierarchy, labels = extrair_hierarquia_e_labels(tree)
-    if len(hierarchy[id]) == 4: # Tem else
-        codition = hierarchy[id][3] # A condição aparece como último filho
-        if_block = hierarchy[id][0] # As intruções em casa de valor verdadeiro são o primeiro filho
-        else_block = hierarchy[id][2] # O else é o segundo filho e suas instruções são o terceiro
+
+    # Verifica se o if possui else
+    if labels.get(hierarchy[id][0],hierarchy[id][0]) == "else":
+        # Localiza a condição do if
+        idx = 0
+        for i, child_id in enumerate(hierarchy[id]):
+            if labels.get(child_id,child_id) in ['<', '>', '<=', '>=', '==', '!=']:
+                condition = hierarchy[id][i]
+                idx = i
+                break
+
+        else_block = hierarchy[id][1:idx]
+        idx += 1
+        #condition = hierarchy[id][2]
+        if_block = hierarchy[id][idx:]
         after = f"else_{n}"
     
-    code.append(f"ifFalse {r_value(tree, codition, labels.get(codition, codition))} goto {after}")
-    code.append(f"true_{after[-1]}:")
-    find_way(tree, if_block, labels.get(if_block, if_block))
-    code.append(f"goto end_{after}")
-    code.append(f"{after}:")
-
-    if len(hierarchy[id]) == 4:
-        find_way(tree, else_block, labels.get(else_block, else_block))
+        code.append(f"ifFalse {r_value(tree, condition, labels.get(condition, condition))} goto {after}")
+        code.append(f"true_{after[-1]}:")
+        for child_id in if_block:
+            find_way(tree, child_id, labels.get(child_id, child_id))
+        code.append(f"goto end_{after}")
+        code.append(f"{after}:")
+        for child_id in else_block:
+            find_way(tree, child_id, labels.get(child_id, child_id))
         code.append(f"end_{after}:")
 
 
