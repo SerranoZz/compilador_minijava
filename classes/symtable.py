@@ -87,7 +87,7 @@ class SymbolTable:
                                 if isinstance(param_type, str) and param_type.startswith("Error"):
                                     param_type = self.find_symbol_class(param)["type"]
                                     if isinstance(param_type, str) and param_type.startswith("Error"):
-                                        return f"Símbolo '{name}' não encontrado."
+                                        return f"Símbolo '{function_name}' não encontrado."
                                         # raise ValueError(f"Símbolo '{param}' não encontrado.")
                             else:
                                 return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': valor '{param}' não é um tipo válido (esperado 'int' ou 'boolean')."
@@ -110,7 +110,7 @@ class SymbolTable:
                             if isinstance(param_type, str) and param_type.startswith("Error"):
                                 param_type = self.find_symbol_class(provided_param)["type"]
                                 if isinstance(param_type, str) and param_type.startswith("Error"):
-                                        return f"Símbolo '{name}' não encontrado."
+                                        return f"Símbolo '{function_name}' não encontrado."
                                         # raise ValueError(f"Símbolo '{provided_param}' não encontrado.")
                         else:
                             return f"Erro no parâmetro {index + 1} durante a chamada da função '{function_name}': valor '{provided_param}' não é um tipo válido (esperado 'int' ou 'boolean')."
